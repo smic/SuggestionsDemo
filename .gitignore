@@ -1,0 +1,9 @@
+build
+*.pbxuser
+*.mode1v3
+.DS_Store
+*.svn
+*.xcuserdatad
+*.perspectivev3
+DerivedData
+*.profraw
