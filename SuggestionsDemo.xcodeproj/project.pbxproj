@@ -18,6 +18,7 @@
 		D41ADC72251212A80096D817 /* DictionaryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D41ADC71251212A80096D817 /* DictionaryModel.swift */; };
 		D41ADC75251217970096D817 /* SMSuggestionItemView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D41ADC73251217970096D817 /* SMSuggestionItemView.xib */; };
 		D41ADC76251217970096D817 /* SMSuggestionGroupView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D41ADC74251217970096D817 /* SMSuggestionGroupView.xib */; };
+		D41ADC92251366FE0096D817 /* SuggestionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D41ADC91251366FE0096D817 /* SuggestionsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +36,7 @@
 		D41ADC71251212A80096D817 /* DictionaryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryModel.swift; sourceTree = "<group>"; };
 		D41ADC73251217970096D817 /* SMSuggestionItemView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SMSuggestionItemView.xib; sourceTree = "<group>"; };
 		D41ADC74251217970096D817 /* SMSuggestionGroupView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SMSuggestionGroupView.xib; sourceTree = "<group>"; };
+		D41ADC91251366FE0096D817 /* SuggestionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuggestionsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +75,7 @@
 				D41ADC71251212A80096D817 /* DictionaryModel.swift */,
 				D41ADC5B2511F8090096D817 /* ContentView.swift */,
 				D41ADC6D2511F8280096D817 /* SMSuggestionTextField.swift */,
+				D41ADC91251366FE0096D817 /* SuggestionsView.swift */,
 				D41ADC74251217970096D817 /* SMSuggestionGroupView.xib */,
 				D41ADC73251217970096D817 /* SMSuggestionItemView.xib */,
 				D41ADC6F2511F8690096D817 /* SMSuggestionsWindowController.swift */,
@@ -165,6 +168,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D41ADC92251366FE0096D817 /* SuggestionsView.swift in Sources */,
 				D41ADC6E2511F8280096D817 /* SMSuggestionTextField.swift in Sources */,
 				D41ADC72251212A80096D817 /* DictionaryModel.swift in Sources */,
 				D41ADC702511F8690096D817 /* SMSuggestionsWindowController.swift in Sources */,
