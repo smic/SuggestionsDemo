@@ -61,7 +61,22 @@ struct SMSuggestionTextField: NSViewRepresentable {
 		return Coordinator(text: self.$text)
 	}
     
-	class Coordinator: NSObject, NSTextFieldDelegate, NSWindowDelegate {
+    class MyWindow: NSWindow {
+//        @objc var hasKeyAppearance: Bool {
+//            return true
+//        }
+        
+        override var isMainWindow: Bool {
+            return true
+        }
+        
+        override var isKeyWindow: Bool {
+//            return NSApp.isActive ? true : super.isKeyWindow
+            return true
+        }
+    }
+    
+	class Coordinator: NSObject, NSTextFieldDelegate, NSWindowDelegate, NSTableViewDataSource, NSTableViewDelegate {
 		@Binding var text: String
         let model = SuggestionsView.Model()
 		
@@ -74,30 +89,89 @@ struct SMSuggestionTextField: NSViewRepresentable {
 		}
         
         fileprivate let hostingController: NSHostingController<AnyView>
+        
+        private let suggestionColumnIdentifier: NSUserInterfaceItemIdentifier = NSUserInterfaceItemIdentifier(rawValue: "Suggestions")
+        private let itemViewIdentifier: NSUserInterfaceItemIdentifier = NSUserInterfaceItemIdentifier(rawValue: "Item")
+        private let groupViewIdentifier: NSUserInterfaceItemIdentifier = NSUserInterfaceItemIdentifier(rawValue: "Group")
+        
+        private var tableView: NSTableView?
 		
 		init(text: Binding<String>) {
 			self._text = text
             
             let contentRect = NSRect(x: 0, y: 0, width: 20, height: 20);
-            let window = NSWindow(contentRect: contentRect, styleMask: .borderless, backing: .buffered, defer: true)
+            let window = MyWindow(contentRect: contentRect, styleMask: .borderless, backing: .buffered, defer: true)
             window.hasShadow = true
             window.backgroundColor = .clear
             window.isOpaque = false
             self.window = window
             
-            let hostingViewController = NSHostingController(rootView: AnyView(SuggestionsView(model: self.model)))
-            window.contentViewController = hostingViewController
-            self.hostingController = hostingViewController
+            let hostingController = NSHostingController(rootView: AnyView(SuggestionsView(model: self.model)))
+            window.contentViewController = hostingController
+            self.hostingController = hostingController
             
             super.init()
             
             window.delegate = self
             
-            self.model.onChoose = { (suggestionIndex, suggestionItem) in
-                self.chooseSuggestion(index: suggestionIndex, item: suggestionItem)
+            // SuggestionsWindow is a transparent window, create RoundedCornersView and set it as the content view to draw a menu like window.
+            /*let contentView = NSVisualEffectView(frame: contentRect)
+            contentView.material = .popover
+            contentView.blendingMode = .behindWindow
+            contentView.wantsLayer = true
+            contentView.layer?.cornerRadius = 5.0
+            contentView.layer?.masksToBounds = true
+            window.contentView = contentView
+            
+            let scrollViewFrame = contentView.bounds
+            let scrollView = NSScrollView(frame: scrollViewFrame)
+            scrollView.borderType = .noBorder
+            scrollView.focusRingType = .none
+            scrollView.drawsBackground = false
+            scrollView.hasVerticalScroller = false
+            scrollView.hasHorizontalScroller = false
+            scrollView.autoresizesSubviews = true
+            scrollView.autoresizingMask = [.width, .height]
+            contentView.addSubview(scrollView)
+            
+            let tableView = NSTableView(frame: scrollView.contentView.bounds)
+            tableView.rowHeight = 19.0
+            tableView.intercellSpacing = .zero
+            tableView.columnAutoresizingStyle = .lastColumnOnlyAutoresizingStyle
+            tableView.focusRingType = .none
+            tableView.allowsColumnReordering = false
+            tableView.allowsColumnResizing = false
+            tableView.allowsMultipleSelection = false
+            tableView.allowsEmptySelection = true
+            tableView.allowsColumnSelection = false
+            tableView.headerView = nil;
+            tableView.selectionHighlightStyle = .regular
+            tableView.backgroundColor = .clear
+            tableView.delegate = self
+            tableView.dataSource = self
+//            tableView.target = self
+//            tableView.action = #selector(selectTableRow(_:))
+            tableView.autoresizingMask = [.width, .maxYMargin]
+            
+            let bundle = Bundle(for: SMSuggestionsWindowController.self)
+            tableView.register(NSNib(nibNamed: "SMSuggestionItemView", bundle: bundle), forIdentifier: self.itemViewIdentifier)
+            tableView.register(NSNib(nibNamed: "SMSuggestionGroupView", bundle: bundle), forIdentifier: self.groupViewIdentifier)
+            
+            let column = NSTableColumn(identifier: self.suggestionColumnIdentifier)
+            column.isEditable = true
+            column.resizingMask = .autoresizingMask
+            tableView.addTableColumn(column)
+            
+            scrollView.documentView = tableView
+            self.tableView = tableView*/
+            
+            
+            
+            self.model.onChoose = { [weak self] (suggestionIndex, suggestionItem) in
+                self?.chooseSuggestion(index: suggestionIndex, item: suggestionItem)
             }
-            self.model.onConfirm = { (suggestionIndex, suggestionItem) in
-                self.confirmSuggestion(index: suggestionIndex, item: suggestionItem)
+            self.model.onConfirm = { [weak self] (suggestionIndex, suggestionItem) in
+                self?.confirmSuggestion(index: suggestionIndex, item: suggestionItem)
             }
 		}
 		
@@ -146,6 +220,8 @@ struct SMSuggestionTextField: NSViewRepresentable {
             
             // add the suggestion window as a child window so that it plays nice with Expose
             parentWindow.addChildWindow(suggestionWindow, ordered: .above)
+            
+            self.tableView?.reloadData()
             
             // keep track of the parent text field in case we need to commit or abort editing.
 //            self.parentTextField = parentTextField
@@ -274,7 +350,9 @@ struct SMSuggestionTextField: NSViewRepresentable {
 //            print("preferredContentSize \(self.hostingController.preferredContentSize)")
             
 //            self.hostingController.view.layoutSubtreeIfNeeded()
-            let contentSize = self.hostingController.sizeThatFits(in: CGSize(width: self.textField.frame.size.width, height: 500))
+//            let contentSize = self.hostingController.sizeThatFits(in: CGSize(width: self.textField.frame.size.width, height: 500))
+            
+            let contentSize = CGSize(width: self.textField.frame.size.width, height: CGFloat(self.model.suggestions.count * 20))
             
             // Don't forget to account for the extra room needed the rounded corners.
         //    NSUInteger numberOfSuggestions = self.suggestions.count;
@@ -383,7 +461,8 @@ struct SMSuggestionTextField: NSViewRepresentable {
             guard let textField = self.textField else {
                 return
             }
-            guard let item = item else {
+            guard let index = index,
+                  let item = item else {
                 textField.stringValue = self.editedText
                 return
             }
@@ -396,6 +475,8 @@ struct SMSuggestionTextField: NSViewRepresentable {
                 let string = fieldEditor.string
                 fieldEditor.selectedRange = NSRange(string.index(string.startIndex, offsetBy: self.editedText.count)..<string.index(string.startIndex, offsetBy: text.count), in: fieldEditor.string)
             }
+            
+            self.tableView?.selectRowIndexes(IndexSet(integer: index), byExtendingSelection: false)
         }
         
         private func confirmSuggestion(index: Int, item: SMSuggestionItem) {
@@ -519,5 +600,105 @@ struct SMSuggestionTextField: NSViewRepresentable {
             print("window did resize: \(self.window?.frame)")
             self.layoutSuggestions()
         }
+        
+        // MARK: - Table View Data Source
+
+        func numberOfRows(in tableView: NSTableView) -> Int {
+            return self.model.suggestions.count
+        }
+
+        func tableView(_ tableView: NSTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
+            let suggestions = self.model.suggestions
+            switch suggestions[row] {
+            case let .item(item):
+                if row == tableView.selectedRow,
+                    let attributedSelectedTitle = item.attributedSelectedTitle {
+                    return attributedSelectedTitle
+                }
+                if let attributedTitle = item.attributedTitle {
+                    return attributedTitle
+                }
+                return item.title
+            case let .group(group):
+                if let attributedTitle = group.attributedTitle {
+                    return attributedTitle
+                }
+                return group.title
+            }
+        }
+
+        // MARK - Table View Delegate
+        
+        /*private var previouslySelectedRow: Int = -1
+        
+        internal func isGroup(at row: NSInteger) -> Bool {
+            let suggestions = self.model.suggestions
+            guard 0 <= row || row < suggestions.count else {
+                return false
+            }
+            switch suggestions[row] {
+            case .group(_):
+                return true
+            default:
+                return false
+            }
+        }
+
+        func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
+            if self.isGroup(at: row) {
+                return row == 0 ? 31 - 13 : 31;
+            }
+            return 19 + 1;
+        }
+
+        func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
+            if self.isGroup(at: row) {
+                return tableView.makeView(withIdentifier: self.groupViewIdentifier, owner: self)
+            }
+            return tableView.makeView(withIdentifier: self.itemViewIdentifier, owner: self)
+        }
+        
+        func tableView(_ tableView: NSTableView, selectionIndexesForProposedSelection proposedSelectionIndexes: IndexSet) -> IndexSet {
+            return IndexSet(proposedSelectionIndexes.filter({ !self.isGroup(at: $0) }))
+        }
+
+        func tableViewSelectionDidChange(_ notification: Notification) {
+            guard let tableView = self.tableView else {
+                return
+            }
+            let selectedRow = tableView.selectedRow
+            var rowIndexesToReload = IndexSet()
+            if selectedRow >= 0 {
+                rowIndexesToReload.insert(selectedRow)
+            }
+            let previouslySelectedRow = self.previouslySelectedRow
+            if previouslySelectedRow >= 0 {
+                rowIndexesToReload.insert(previouslySelectedRow)
+            }
+            tableView.reloadData(forRowIndexes: rowIndexesToReload, columnIndexes: IndexSet(integer: 0))
+            guard let suggestionWindow = self.window else {
+                return
+            }
+//            guard let onSelectSuggestionItem = self.onSelectSuggestionItem else {
+//                return
+//            }
+//            if selectedRow < 0 {
+//                if suggestionWindow.isVisible {
+//                    onSelectSuggestionItem(nil)
+//                }
+//                return
+//            }
+//            switch self.model.suggestions[selectedRow] {
+//            case let .item(item):
+//                if suggestionWindow.isVisible {
+//                    onSelectSuggestionItem(item)
+//                }
+//            default:
+//                if suggestionWindow.isVisible {
+//                    onSelectSuggestionItem(nil)
+//                }
+//            }
+//            self.previouslySelectedRow = selectedRow
+        }*/
 	}
 }
