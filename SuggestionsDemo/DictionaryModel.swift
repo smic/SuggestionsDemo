@@ -8,6 +8,25 @@
 import Foundation
 import Combine
 
+enum SMSuggestion {
+    case item(SMSuggestionItem)
+    case group(SMSuggestionGroup)
+}
+
+struct SMSuggestionItem {
+    var title: String = ""
+    var attributedTitle: NSAttributedString?
+    var attributedSelectedTitle: NSAttributedString?
+    var text: String = ""
+    var representedObject: Any?
+}
+
+struct SMSuggestionGroup {
+    var title: String = ""
+    var attributedTitle: NSAttributedString?
+}
+
+
 final class DictionaryModel: ObservableObject {
     var englishWords: [String]
     var englishTranslations: [String:String]

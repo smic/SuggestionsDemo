@@ -9,6 +9,8 @@
 import AppKit
 import SwiftUI
 
+// original code from https://developer.apple.com/library/archive/samplecode/CustomMenus
+
 struct SMSuggestionTextField: NSViewRepresentable {
 	@Binding var text: String
 	var suggestions: [SMSuggestion]
@@ -153,9 +155,9 @@ struct SMSuggestionTextField: NSViewRepresentable {
 //            tableView.action = #selector(selectTableRow(_:))
             tableView.autoresizingMask = [.width, .maxYMargin]
             
-            let bundle = Bundle(for: SMSuggestionsWindowController.self)
-            tableView.register(NSNib(nibNamed: "SMSuggestionItemView", bundle: bundle), forIdentifier: self.itemViewIdentifier)
-            tableView.register(NSNib(nibNamed: "SMSuggestionGroupView", bundle: bundle), forIdentifier: self.groupViewIdentifier)
+//            let bundle = Bundle(for: SMSuggestionsWindowController.self)
+//            tableView.register(NSNib(nibNamed: "SMSuggestionItemView", bundle: bundle), forIdentifier: self.itemViewIdentifier)
+//            tableView.register(NSNib(nibNamed: "SMSuggestionGroupView", bundle: bundle), forIdentifier: self.groupViewIdentifier)
             
             let column = NSTableColumn(identifier: self.suggestionColumnIdentifier)
             column.isEditable = true
@@ -164,8 +166,6 @@ struct SMSuggestionTextField: NSViewRepresentable {
             
             scrollView.documentView = tableView
             self.tableView = tableView*/
-            
-            
             
             self.model.onChoose = { [weak self] (suggestionIndex, suggestionItem) in
                 self?.chooseSuggestion(index: suggestionIndex, item: suggestionItem)
@@ -221,7 +221,7 @@ struct SMSuggestionTextField: NSViewRepresentable {
             // add the suggestion window as a child window so that it plays nice with Expose
             parentWindow.addChildWindow(suggestionWindow, ordered: .above)
             
-            self.tableView?.reloadData()
+//            self.tableView?.reloadData()
             
             // keep track of the parent text field in case we need to commit or abort editing.
 //            self.parentTextField = parentTextField
@@ -339,6 +339,8 @@ struct SMSuggestionTextField: NSViewRepresentable {
                 print("3.frame: \(frame)")
             }
             
+//            self.tableView?.reloadData()
+            
             print("1.suggestionWindow.frame: \(suggestionWindow.frame)")
             
 //            suggestionWindow.setFrame(frame, display: false)
@@ -347,12 +349,17 @@ struct SMSuggestionTextField: NSViewRepresentable {
 
             // We have added all of the suggestion to the window. Now set the size of the window.
             
-//            print("preferredContentSize \(self.hostingController.preferredContentSize)")
+//            print("preferredContentSize: \(self.hostingController.preferredContentSize)")
+//            print("intrinsicContentSize: \(self.hostingController.view.intrinsicContentSize)")
             
 //            self.hostingController.view.layoutSubtreeIfNeeded()
-//            let contentSize = self.hostingController.sizeThatFits(in: CGSize(width: self.textField.frame.size.width, height: 500))
+            let availableSize = CGSize(width: self.textField.frame.size.width, height: 500)
+            print("availableSize: \(availableSize)")
+            let contentSize = self.hostingController.sizeThatFits(in: availableSize)
+//            let contentSize = self.tableView?.frame.size ?? .zero
+            print("contentSize: \(contentSize)")
             
-            let contentSize = CGSize(width: self.textField.frame.size.width, height: CGFloat(self.model.suggestions.count * 20))
+//            let contentSize = CGSize(width: self.textField.frame.size.width, height: CGFloat(self.model.suggestions.count * 20))
             
             // Don't forget to account for the extra room needed the rounded corners.
         //    NSUInteger numberOfSuggestions = self.suggestions.count;
@@ -364,7 +371,7 @@ struct SMSuggestionTextField: NSViewRepresentable {
             
             var winFrame = CGRect(x: location.x,
                                   y: location.y - contentSize.height,
-                                  width: contentSize.width,
+                                  width: availableSize.width,
                                   height: contentSize.height)
 //            winFrame.origin.y = winFrame.maxY - contentSize.height
 //            winFrame.size.height = contentSize.height;
@@ -518,6 +525,12 @@ struct SMSuggestionTextField: NSViewRepresentable {
 			
 			self.text = string
 		}
+        
+        func controlTextDidEndEditing(_ obj: Notification) {
+            /* If the suggestionController is already in a cancelled state, this call does nothing and is therefore always safe to call.
+            */
+            self.cancel()
+        }
 		
 	//	- (void)textFieldDidBecomeFirstResponder:(SMFocusNotifyingTextField *)textField
 	//	{
@@ -607,7 +620,7 @@ struct SMSuggestionTextField: NSViewRepresentable {
             return self.model.suggestions.count
         }
 
-        func tableView(_ tableView: NSTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
+        /*func tableView(_ tableView: NSTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
             let suggestions = self.model.suggestions
             switch suggestions[row] {
             case let .item(item):
@@ -624,6 +637,42 @@ struct SMSuggestionTextField: NSViewRepresentable {
                     return attributedTitle
                 }
                 return group.title
+            }
+        }*/
+        
+        func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
+            let suggestionIndex = row
+            let model = self.model
+            let suggestion = model.suggestions[suggestionIndex]
+            switch suggestion {
+            case let .item(item):
+                return NSHostingView(rootView: AnyView(
+                                        Text(item.title)
+                                            .frame(maxWidth: .infinity, minHeight: 20, alignment: .leading)
+                                            .onHover(perform: { hovering in
+                                                if hovering {
+                                                    model.selectedSuggestionIndex = suggestionIndex
+                                                    self.model.onChoose?(suggestionIndex, item)
+                                                } else if model.selectedSuggestionIndex == suggestionIndex {
+                                                    model.selectedSuggestionIndex = nil
+                                                    self.model.onChoose?(nil, nil)
+                                                }
+                                            })
+                                            .onTapGesture {
+                                                model.onConfirm?(suggestionIndex, item)
+                                            }
+                ))
+            case let .group(group):
+                return NSHostingView(rootView: AnyView(
+                    VStack(alignment: .leading) {
+                        Divider()
+                        Text(group.title)
+                            .foregroundColor(.gray)
+                            .font(.caption)
+                            .bold()
+                    }
+                    .frame(maxWidth: .infinity, minHeight: 20, alignment: .leading)
+                ))
             }
         }
 

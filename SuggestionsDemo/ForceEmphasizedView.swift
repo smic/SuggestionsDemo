@@ -20,6 +20,15 @@ struct ForceEmphasizedView<Content>: NSViewRepresentable where Content: View {
     }
     
     func updateNSView(_ view: NSView, context: Context) {
+        print("1.view: \(view)")
+        print("2.view: \(view.superview)")
+        print("3.view: \(view.superview?.superview)")
+        print("4.view: \(view.superview?.superview?.superview)")
+        var index = 0
+        for superview in sequence(first: view, next: { $0.superview }) {
+            print("\(index).superview: \(superview.className)")
+            index += 1
+        }
         for superview in sequence(first: view, next: { $0.superview }) {
             if let rowView = superview as? NSTableRowView {
                 if !rowView.isEmphasized {

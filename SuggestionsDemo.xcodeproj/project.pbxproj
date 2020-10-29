@@ -14,13 +14,11 @@
 		D41ADC6B2511F81E0096D817 /* english_german.json in Resources */ = {isa = PBXBuildFile; fileRef = D41ADC692511F81E0096D817 /* english_german.json */; };
 		D41ADC6C2511F81E0096D817 /* german_english.json in Resources */ = {isa = PBXBuildFile; fileRef = D41ADC6A2511F81E0096D817 /* german_english.json */; };
 		D41ADC6E2511F8280096D817 /* SMSuggestionTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = D41ADC6D2511F8280096D817 /* SMSuggestionTextField.swift */; };
-		D41ADC702511F8690096D817 /* SMSuggestionsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D41ADC6F2511F8690096D817 /* SMSuggestionsWindowController.swift */; };
 		D41ADC72251212A80096D817 /* DictionaryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D41ADC71251212A80096D817 /* DictionaryModel.swift */; };
-		D41ADC75251217970096D817 /* SMSuggestionItemView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D41ADC73251217970096D817 /* SMSuggestionItemView.xib */; };
-		D41ADC76251217970096D817 /* SMSuggestionGroupView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D41ADC74251217970096D817 /* SMSuggestionGroupView.xib */; };
 		D41ADC92251366FE0096D817 /* SuggestionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D41ADC91251366FE0096D817 /* SuggestionsView.swift */; };
 		D4C56DC22516788C00EFEEB1 /* DebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C56DC12516788C00EFEEB1 /* DebugView.swift */; };
 		D4C56DC52517212A00EFEEB1 /* ForceEmphasizedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C56DC42517212A00EFEEB1 /* ForceEmphasizedView.swift */; };
+		D4C56DD0251A4F1500EFEEB1 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C56DCF251A4F1400EFEEB1 /* Log.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,13 +32,11 @@
 		D41ADC692511F81E0096D817 /* english_german.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = english_german.json; sourceTree = "<group>"; };
 		D41ADC6A2511F81E0096D817 /* german_english.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = german_english.json; sourceTree = "<group>"; };
 		D41ADC6D2511F8280096D817 /* SMSuggestionTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SMSuggestionTextField.swift; sourceTree = "<group>"; };
-		D41ADC6F2511F8690096D817 /* SMSuggestionsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMSuggestionsWindowController.swift; sourceTree = "<group>"; };
 		D41ADC71251212A80096D817 /* DictionaryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryModel.swift; sourceTree = "<group>"; };
-		D41ADC73251217970096D817 /* SMSuggestionItemView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SMSuggestionItemView.xib; sourceTree = "<group>"; };
-		D41ADC74251217970096D817 /* SMSuggestionGroupView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SMSuggestionGroupView.xib; sourceTree = "<group>"; };
 		D41ADC91251366FE0096D817 /* SuggestionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuggestionsView.swift; sourceTree = "<group>"; };
 		D4C56DC12516788C00EFEEB1 /* DebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugView.swift; sourceTree = "<group>"; };
 		D4C56DC42517212A00EFEEB1 /* ForceEmphasizedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForceEmphasizedView.swift; sourceTree = "<group>"; };
+		D4C56DCF251A4F1400EFEEB1 /* Log.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,11 +74,9 @@
 				D41ADC592511F8090096D817 /* SuggestionsDemoApp.swift */,
 				D41ADC71251212A80096D817 /* DictionaryModel.swift */,
 				D41ADC5B2511F8090096D817 /* ContentView.swift */,
+				D4C56DCF251A4F1400EFEEB1 /* Log.swift */,
 				D41ADC6D2511F8280096D817 /* SMSuggestionTextField.swift */,
 				D41ADC91251366FE0096D817 /* SuggestionsView.swift */,
-				D41ADC74251217970096D817 /* SMSuggestionGroupView.xib */,
-				D41ADC73251217970096D817 /* SMSuggestionItemView.xib */,
-				D41ADC6F2511F8690096D817 /* SMSuggestionsWindowController.swift */,
 				D4C56DC12516788C00EFEEB1 /* DebugView.swift */,
 				D4C56DC42517212A00EFEEB1 /* ForceEmphasizedView.swift */,
 				D41ADC5D2511F80B0096D817 /* Assets.xcassets */,
@@ -158,10 +152,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D41ADC76251217970096D817 /* SMSuggestionGroupView.xib in Resources */,
 				D41ADC612511F80B0096D817 /* Preview Assets.xcassets in Resources */,
 				D41ADC5E2511F80B0096D817 /* Assets.xcassets in Resources */,
-				D41ADC75251217970096D817 /* SMSuggestionItemView.xib in Resources */,
 				D41ADC6C2511F81E0096D817 /* german_english.json in Resources */,
 				D41ADC6B2511F81E0096D817 /* english_german.json in Resources */,
 			);
@@ -176,10 +168,10 @@
 			files = (
 				D4C56DC52517212A00EFEEB1 /* ForceEmphasizedView.swift in Sources */,
 				D41ADC92251366FE0096D817 /* SuggestionsView.swift in Sources */,
+				D4C56DD0251A4F1500EFEEB1 /* Log.swift in Sources */,
 				D41ADC6E2511F8280096D817 /* SMSuggestionTextField.swift in Sources */,
 				D41ADC72251212A80096D817 /* DictionaryModel.swift in Sources */,
 				D4C56DC22516788C00EFEEB1 /* DebugView.swift in Sources */,
-				D41ADC702511F8690096D817 /* SMSuggestionsWindowController.swift in Sources */,
 				D41ADC5C2511F8090096D817 /* ContentView.swift in Sources */,
 				D41ADC5A2511F8090096D817 /* SuggestionsDemoApp.swift in Sources */,
 			);
