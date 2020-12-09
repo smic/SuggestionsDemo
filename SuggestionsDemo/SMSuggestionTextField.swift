@@ -38,6 +38,7 @@ struct SMSuggestionTextField: NSViewRepresentable {
 		let coordinator = context.coordinator
 		
 		let suggestions = self.suggestions
+        coordinator.model.selectedSuggestionIndex = nil
         coordinator.model.suggestions = suggestions
 //        print("set suggestions in \(coordinator.model): \(suggestions)")
 		/*let suggestionsController = coordinator.suggestionsController
@@ -76,6 +77,11 @@ struct SMSuggestionTextField: NSViewRepresentable {
 //            return NSApp.isActive ? true : super.isKeyWindow
             return true
         }
+        
+        override func makeFirstResponder(_ responder: NSResponder?) -> Bool {
+            print("makeFirstResponder window: \(self) first responder: \(responder)")
+            return super.makeFirstResponder(responder);
+        }
     }
     
 	class Coordinator: NSObject, NSTextFieldDelegate, NSWindowDelegate, NSTableViewDataSource, NSTableViewDelegate {
@@ -96,7 +102,7 @@ struct SMSuggestionTextField: NSViewRepresentable {
         private let itemViewIdentifier: NSUserInterfaceItemIdentifier = NSUserInterfaceItemIdentifier(rawValue: "Item")
         private let groupViewIdentifier: NSUserInterfaceItemIdentifier = NSUserInterfaceItemIdentifier(rawValue: "Group")
         
-        private var tableView: NSTableView?
+//        private var tableView: NSTableView?
 		
 		init(text: Binding<String>) {
 			self._text = text
@@ -116,14 +122,17 @@ struct SMSuggestionTextField: NSViewRepresentable {
             
             window.delegate = self
             
-            // SuggestionsWindow is a transparent window, create RoundedCornersView and set it as the content view to draw a menu like window.
-            /*let contentView = NSVisualEffectView(frame: contentRect)
-            contentView.material = .popover
-            contentView.blendingMode = .behindWindow
+            /*// SuggestionsWindow is a transparent window, create RoundedCornersView and set it as the content view to draw a menu like window.
+            let contentView = window.contentView!
             contentView.wantsLayer = true
-            contentView.layer?.cornerRadius = 5.0
+            contentView.layer?.cornerRadius = 8.0
             contentView.layer?.masksToBounds = true
-            window.contentView = contentView
+            
+            let visualEffectView = NSVisualEffectView(frame: contentView.bounds)
+            visualEffectView.autoresizingMask = [.width, .height]
+            visualEffectView.material = .popover
+            visualEffectView.blendingMode = .behindWindow
+            contentView.addSubview(visualEffectView)
             
             let scrollViewFrame = contentView.bounds
             let scrollView = NSScrollView(frame: scrollViewFrame)
@@ -172,6 +181,14 @@ struct SMSuggestionTextField: NSViewRepresentable {
             }
             self.model.onConfirm = { [weak self] (suggestionIndex, suggestionItem) in
                 self?.confirmSuggestion(index: suggestionIndex, item: suggestionItem)
+            }
+            
+            let center = NotificationCenter.default
+            center.addObserver(forName: NSWindow.didBecomeMainNotification, object: nil, queue: nil) { (_) in
+                print("Window become main: \(NSApp.mainWindow)")
+            }
+            center.addObserver(forName: NSWindow.didBecomeKeyNotification, object: nil, queue: nil) { (_) in
+                print("Window become key: \(NSApp.keyWindow)")
             }
 		}
 		
@@ -270,6 +287,8 @@ struct SMSuggestionTextField: NSViewRepresentable {
                 // lost key status, cancel the suggestion window
                 self.cancel()
             }
+            
+            self.ensureFocus()
         }
         
         public func cancel() {
@@ -355,9 +374,14 @@ struct SMSuggestionTextField: NSViewRepresentable {
 //            self.hostingController.view.layoutSubtreeIfNeeded()
             let availableSize = CGSize(width: self.textField.frame.size.width, height: 500)
             print("availableSize: \(availableSize)")
-            let contentSize = self.hostingController.sizeThatFits(in: availableSize)
+//            let contentSize = self.tableView?.intrinsicContentSize ?? .zero
+//            let contentSize = self.hostingController.sizeThatFits(in: availableSize)
 //            let contentSize = self.tableView?.frame.size ?? .zero
+            let contentSize = self.hostingController.view.intrinsicContentSize
             print("contentSize: \(contentSize)")
+            
+            print("1.size: \(self.hostingController.sizeThatFits(in: availableSize))")
+            print("2.size: \(self.hostingController.view.intrinsicContentSize)")
             
 //            let contentSize = CGSize(width: self.textField.frame.size.width, height: CGFloat(self.model.suggestions.count * 20))
             
@@ -389,11 +413,9 @@ struct SMSuggestionTextField: NSViewRepresentable {
             }
 
             guard let (index, item) = self.previousItemRow(for: selectedRow) else {
-                self.model.selectedSuggestionIndex = nil
                 self.chooseSuggestion(index: nil, item: nil)
                 return
             }
-            self.model.selectedSuggestionIndex = index
             self.chooseSuggestion(index: index, item: item)
         }
 
@@ -404,7 +426,6 @@ struct SMSuggestionTextField: NSViewRepresentable {
                 guard let (index, item) = self.firstItem else {
                     return
                 }
-                self.model.selectedSuggestionIndex = index
                 self.chooseSuggestion(index: index, item: item)
                 return
             }
@@ -412,7 +433,6 @@ struct SMSuggestionTextField: NSViewRepresentable {
             guard let (index, item) = self.nextItem(for: selectedIndex) else {
                 return
             }
-            self.model.selectedSuggestionIndex = index
             self.chooseSuggestion(index: index, item: item)
         }
         
@@ -473,6 +493,12 @@ struct SMSuggestionTextField: NSViewRepresentable {
                 textField.stringValue = self.editedText
                 return
             }
+            
+            if self.model.selectedSuggestionIndex == nil {
+                self.ensureFocus()
+            }
+            self.model.selectedSuggestionIndex = index
+            
             let text = item.text
             
             textField.stringValue = text
@@ -483,7 +509,7 @@ struct SMSuggestionTextField: NSViewRepresentable {
                 fieldEditor.selectedRange = NSRange(string.index(string.startIndex, offsetBy: self.editedText.count)..<string.index(string.startIndex, offsetBy: text.count), in: fieldEditor.string)
             }
             
-            self.tableView?.selectRowIndexes(IndexSet(integer: index), byExtendingSelection: false)
+//            self.tableView?.selectRowIndexes(IndexSet(integer: index), byExtendingSelection: false)
         }
         
         private func confirmSuggestion(index: Int, item: SMSuggestionItem) {
@@ -504,6 +530,30 @@ struct SMSuggestionTextField: NSViewRepresentable {
             self.cancel()
             
             self.text = text
+        }
+        
+        private func ensureFocus() {
+//            let _ = self.ensureFocus(self.hostingController.view)
+            for subview in self.hostingController.view.subviews {
+                if self.ensureFocus(subview) {
+                    return
+                }
+            }
+        }
+        
+        private func ensureFocus(_ view: NSView) -> Bool {
+            if view.canBecomeKeyView {
+                print("make focus: \(view)")
+                view.window?.makeFirstResponder(view)
+                return true
+            }
+            
+            for subview in view.subviews {
+                if self.ensureFocus(subview) {
+                    return true
+                }
+            }
+            return false
         }
 		
 		// MARK: - NSTextField Delegate Methods

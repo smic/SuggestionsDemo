@@ -35,7 +35,7 @@ struct SuggestionsView: View {
         let suggestions = model.suggestions
         //        print("get suggestions of \(self.model): \(suggestions)")
         
-        return GeometryReader { geometry in
+//        return GeometryReader { geometry in
             return List(selection: self.$model.selectedSuggestionIndex) {
                 ForEach(suggestions.indices, id: \.self)  { suggestionIndex -> AnyView in
                     //            return List(suggestions.indices, id: \.self, selection: self.$model.selectedSuggestionIndex) { suggestionIndex -> AnyView in
@@ -44,9 +44,9 @@ struct SuggestionsView: View {
                     return AnyView(Group {
                         switch suggestion {
                         case let .item(item):
-                            ForceEmphasizedView {
+//                            ForceEmphasizedView {
                                 Text(item.title)
-                            }
+//                            }
                             //                            .frame(maxWidth: .infinity, minHeight: 20, alignment: .leading)
                             .onHover(perform: { hovering in
                                 if hovering {
@@ -63,7 +63,7 @@ struct SuggestionsView: View {
                             .id(item.text)
                             .tag(suggestionIndex)
                         case let .group(group):
-                            ForceEmphasizedView {
+//                            ForceEmphasizedView {
                                 VStack(alignment: .leading) {
                                     Divider()
                                     Text(group.title)
@@ -71,23 +71,23 @@ struct SuggestionsView: View {
                                         .font(.caption)
                                         .bold()
                                 }
-                            }
+//                            }
                             //                            .frame(maxWidth: .infinity, minHeight: 20, alignment: .leading)
                             .tag(suggestionIndex)
                         }
                         //                .preference(key: SuggestionHeightPreferenceKey.self, value: geometry.frame(in: .named("Custom")).maxY)
                     })
                 }
-                .log("ForEach: \(geometry.frame(in: .named("Custom")))")
-                GeometryReader { geometry in
-                    Color.red
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .log("Last: \(geometry.frame(in: .named("Custom")))")
-                }
+//                .log("ForEach: \(geometry.frame(in: .named("Custom")))")
+//                GeometryReader { geometry in
+//                    Color.red
+//                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+//                        .log("Last: \(geometry.frame(in: .named("Custom")))")
+//                }
             }
             //            .fixedSize(horizontal: false, vertical: true)
-            .log("List: \(geometry.size)")
-        }
+//            .log("List: \(geometry.size)")
+//        }
         //        .environment(\.controlActiveState, .key)
         //        .listStyle(PlainListStyle())
         //        .listStyle(SidebarListStyle())
