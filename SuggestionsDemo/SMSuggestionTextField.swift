@@ -8,6 +8,7 @@
 
 import AppKit
 import SwiftUI
+import Combine
 
 // original code from https://developer.apple.com/library/archive/samplecode/CustomMenus
 
@@ -44,16 +45,16 @@ struct SMSuggestionTextField: NSViewRepresentable {
 		/*let suggestionsController = coordinator.suggestionsController
 		suggestionsController.suggestions = suggestions*/
 		
-		print("coordinator.editing: \(coordinator.editing)")
+//		print("coordinator.editing: \(coordinator.editing)")
 		if !suggestions.isEmpty && coordinator.editing {
-			print("start with \(suggestions.count)")
+//			print("start with \(suggestions.count)")
 			
 			// We have at least 1 suggestion. Update the field editor to the first suggestion and show the suggestions window.
 			if let window = coordinator.window, !window.isVisible {
                 coordinator.showSuggestions()
 			}
 		} else {
-			print("cancel")
+//			print("cancel")
 			
 			// No suggestions. Cancel the suggestion window.
             coordinator.cancel()
@@ -79,14 +80,14 @@ struct SMSuggestionTextField: NSViewRepresentable {
         }
         
         override func makeFirstResponder(_ responder: NSResponder?) -> Bool {
-            print("makeFirstResponder window: \(self) first responder: \(responder)")
+//            print("makeFirstResponder window: \(self) first responder: \(responder)")
             return super.makeFirstResponder(responder);
         }
     }
     
 	class Coordinator: NSObject, NSTextFieldDelegate, NSWindowDelegate, NSTableViewDataSource, NSTableViewDelegate {
 		@Binding var text: String
-        let model = SuggestionsView.Model()
+        let model = SuggestionsModel()
 		
 		var updatingText: Bool = false
 		var editedText: String = ""
@@ -103,6 +104,7 @@ struct SMSuggestionTextField: NSViewRepresentable {
         private let groupViewIdentifier: NSUserInterfaceItemIdentifier = NSUserInterfaceItemIdentifier(rawValue: "Group")
         
 //        private var tableView: NSTableView?
+        private var tableView: NSTableView?
 		
 		init(text: Binding<String>) {
 			self._text = text
@@ -114,7 +116,7 @@ struct SMSuggestionTextField: NSViewRepresentable {
             window.isOpaque = false
             self.window = window
             
-            let hostingController = NSHostingController(rootView: AnyView(SuggestionsView(model: self.model)))
+            let hostingController = NSHostingController(rootView: AnyView(SuggestionsView2(model: self.model)))
             window.contentViewController = hostingController
             self.hostingController = hostingController
             
@@ -183,19 +185,21 @@ struct SMSuggestionTextField: NSViewRepresentable {
                 self?.confirmSuggestion(index: suggestionIndex, item: suggestionItem)
             }
             
-            let center = NotificationCenter.default
-            center.addObserver(forName: NSWindow.didBecomeMainNotification, object: nil, queue: nil) { (_) in
-                print("Window become main: \(NSApp.mainWindow)")
-            }
-            center.addObserver(forName: NSWindow.didBecomeKeyNotification, object: nil, queue: nil) { (_) in
-                print("Window become key: \(NSApp.keyWindow)")
-            }
+//            let center = NotificationCenter.default
+//            center.addObserver(forName: NSWindow.didBecomeMainNotification, object: nil, queue: nil) { (_) in
+//                print("Window become main: \(NSApp.mainWindow)")
+//            }
+//            center.addObserver(forName: NSWindow.didBecomeKeyNotification, object: nil, queue: nil) { (_) in
+//                print("Window become key: \(NSApp.keyWindow)")
+//            }
 		}
 		
 		var textField: NSTextField!
         var window: NSWindow?
         private var localMouseDownEventMonitor: Any?
         private var lostFocusObserver: Any?
+        private var frameSubscription: AnyCancellable?
+        private var intrinsicContentSizeSubscription: AnyCancellable?
 
 		/*lazy var suggestionsController: SMSuggestionsWindowController = {
 			let suggestionsController = SMSuggestionsWindowController()
@@ -279,7 +283,8 @@ struct SMSuggestionTextField: NSViewRepresentable {
             // as per the documentation, do not retain event monitors.
             
             // We also need to auto cancel when the window loses key status. This may be done via a mouse click in another window, or via the keyboard (cmd-~ or cmd-tab), or a notificaiton. Observing NSWindowDidResignKeyNotification catches all of these cases and the mouse down event monitor catches the other cases.
-            self.lostFocusObserver = NotificationCenter.default.addObserver(forName: NSWindow.didResignKeyNotification, object: parentWindow, queue: nil) { [weak self] _ in
+            let notificationCenter = NotificationCenter.default
+            self.lostFocusObserver = notificationCenter.addObserver(forName: NSWindow.didResignKeyNotification, object: parentWindow, queue: nil) { [weak self] _ in
                 guard let self = self else {
                     return
                 }
@@ -288,7 +293,23 @@ struct SMSuggestionTextField: NSViewRepresentable {
                 self.cancel()
             }
             
-            self.ensureFocus()
+//            self.ensureFocus()
+            self.tableView = self.findTableView(self.hostingController.view)
+            if let tableView = self.tableView {
+                self.window?.makeFirstResponder(tableView)
+                
+//                tableView.postsFrameChangedNotifications = true
+//                self.frameSubscription = notificationCenter.publisher(for: NSView.frameDidChangeNotification, object: tableView)
+//                    .sink { (_) in
+//                        print("Frame did change: \(self.tableView?.frame.size ?? .zero)")
+//                        print("Instrinsic size: \(self.tableView?.intrinsicContentSize ?? .zero)")
+//                        self.layoutSuggestions()
+//                    }
+//                self.intrinsicContentSizeSubscription = tableView.publisher(for: \.intrinsicContentSize)
+//                    .sink { intrinsicContentSize in
+//                        print("intrinsicContentSize: \(intrinsicContentSize)")
+//                    }
+            }
         }
         
         public func cancel() {
@@ -351,16 +372,16 @@ struct SMSuggestionTextField: NSViewRepresentable {
             
             do {
                 var frame = self.textField.frame
-                print("1.frame: \(frame)")
+//                print("1.frame: \(frame)")
                 frame = self.textField.superview!.convert(frame, to: nil)
-                print("2.frame: \(frame)")
+//                print("2.frame: \(frame)")
                 frame = self.textField.window!.convertToScreen(frame)
-                print("3.frame: \(frame)")
+//                print("3.frame: \(frame)")
             }
             
 //            self.tableView?.reloadData()
             
-            print("1.suggestionWindow.frame: \(suggestionWindow.frame)")
+//            print("1.suggestionWindow.frame: \(suggestionWindow.frame)")
             
 //            suggestionWindow.setFrame(frame, display: false)
 //            suggestionWindow.setFrameTopLeftPoint(location)
@@ -373,15 +394,18 @@ struct SMSuggestionTextField: NSViewRepresentable {
             
 //            self.hostingController.view.layoutSubtreeIfNeeded()
             let availableSize = CGSize(width: self.textField.frame.size.width, height: 500)
-            print("availableSize: \(availableSize)")
+//            print("availableSize: \(availableSize)")
+            print("sizeThatFits: \(self.hostingController.sizeThatFits(in: availableSize))")
 //            let contentSize = self.tableView?.intrinsicContentSize ?? .zero
-//            let contentSize = self.hostingController.sizeThatFits(in: availableSize)
+            let contentSize = self.hostingController.sizeThatFits(in: availableSize)
 //            let contentSize = self.tableView?.frame.size ?? .zero
-            let contentSize = self.hostingController.view.intrinsicContentSize
-            print("contentSize: \(contentSize)")
+//            let contentSize = self.hostingController.view.intrinsicContentSize
             
-            print("1.size: \(self.hostingController.sizeThatFits(in: availableSize))")
-            print("2.size: \(self.hostingController.view.intrinsicContentSize)")
+            print("contentSize: \(contentSize)")
+            print("numberOfRows: \(self.tableView?.numberOfRows ?? 0)")
+            
+//            print("1.size: \(self.hostingController.sizeThatFits(in: availableSize))")
+//            print("2.size: \(self.hostingController.view.intrinsicContentSize)")
             
 //            let contentSize = CGSize(width: self.textField.frame.size.width, height: CGFloat(self.model.suggestions.count * 20))
             
@@ -403,8 +427,8 @@ struct SMSuggestionTextField: NSViewRepresentable {
                 suggestionWindow.setFrame(winFrame, display: false)
             }
             
-            print("content size: \(contentSize)")
-            print("winFrame: \(winFrame)")
+//            print("content size: \(contentSize)")
+//            print("winFrame: \(winFrame)")
         }
         
         fileprivate func moveUp() {
@@ -494,9 +518,9 @@ struct SMSuggestionTextField: NSViewRepresentable {
                 return
             }
             
-            if self.model.selectedSuggestionIndex == nil {
-                self.ensureFocus()
-            }
+//            if self.model.selectedSuggestionIndex == nil {
+//                self.ensureFocus()
+//            }
             self.model.selectedSuggestionIndex = index
             
             let text = item.text
@@ -532,28 +556,41 @@ struct SMSuggestionTextField: NSViewRepresentable {
             self.text = text
         }
         
-        private func ensureFocus() {
-//            let _ = self.ensureFocus(self.hostingController.view)
-            for subview in self.hostingController.view.subviews {
-                if self.ensureFocus(subview) {
-                    return
-                }
-            }
-        }
+//        private func ensureFocus() {
+////            let _ = self.ensureFocus(self.hostingController.view)
+//            for subview in self.hostingController.view.subviews {
+//                if self.ensureFocus(subview) {
+//                    return
+//                }
+//            }
+//        }
+//
+//        private func ensureFocus(_ view: NSView) -> Bool {
+//            if view.canBecomeKeyView {
+//                print("make focus: \(view)")
+//                print("is table view: \(view is NSTableView)")
+//                view.window?.makeFirstResponder(view)
+//                return true
+//            }
+//
+//            for subview in view.subviews {
+//                if self.ensureFocus(subview) {
+//                    return true
+//                }
+//            }
+//            return false
+//        }
         
-        private func ensureFocus(_ view: NSView) -> Bool {
-            if view.canBecomeKeyView {
-                print("make focus: \(view)")
-                view.window?.makeFirstResponder(view)
-                return true
+        private func findTableView(_ view: NSView) -> NSTableView? {
+            if let tableView = view as? NSTableView {
+                return tableView
             }
-            
             for subview in view.subviews {
-                if self.ensureFocus(subview) {
-                    return true
+                if let tableView = self.findTableView(subview) {
+                    return tableView
                 }
             }
-            return false
+            return nil
         }
 		
 		// MARK: - NSTextField Delegate Methods
@@ -661,7 +698,7 @@ struct SMSuggestionTextField: NSViewRepresentable {
         
         func windowDidResize(_ notification: Notification) {
             print("window did resize: \(self.window?.frame)")
-            self.layoutSuggestions()
+//            self.layoutSuggestions()
         }
         
         // MARK: - Table View Data Source

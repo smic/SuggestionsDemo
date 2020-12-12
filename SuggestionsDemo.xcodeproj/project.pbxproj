@@ -16,6 +16,8 @@
 		D41ADC6E2511F8280096D817 /* SMSuggestionTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = D41ADC6D2511F8280096D817 /* SMSuggestionTextField.swift */; };
 		D41ADC72251212A80096D817 /* DictionaryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D41ADC71251212A80096D817 /* DictionaryModel.swift */; };
 		D41ADC92251366FE0096D817 /* SuggestionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D41ADC91251366FE0096D817 /* SuggestionsView.swift */; };
+		D44818C725850F330084FAED /* SuggestionsView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = D44818C625850F330084FAED /* SuggestionsView2.swift */; };
+		D44818CA25850F570084FAED /* SuggestionsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D44818C925850F570084FAED /* SuggestionsModel.swift */; };
 		D4C56DC22516788C00EFEEB1 /* DebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C56DC12516788C00EFEEB1 /* DebugView.swift */; };
 		D4C56DC52517212A00EFEEB1 /* ForceEmphasizedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C56DC42517212A00EFEEB1 /* ForceEmphasizedView.swift */; };
 		D4C56DD0251A4F1500EFEEB1 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C56DCF251A4F1400EFEEB1 /* Log.swift */; };
@@ -34,6 +36,8 @@
 		D41ADC6D2511F8280096D817 /* SMSuggestionTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SMSuggestionTextField.swift; sourceTree = "<group>"; };
 		D41ADC71251212A80096D817 /* DictionaryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryModel.swift; sourceTree = "<group>"; };
 		D41ADC91251366FE0096D817 /* SuggestionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuggestionsView.swift; sourceTree = "<group>"; };
+		D44818C625850F330084FAED /* SuggestionsView2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuggestionsView2.swift; sourceTree = "<group>"; };
+		D44818C925850F570084FAED /* SuggestionsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuggestionsModel.swift; sourceTree = "<group>"; };
 		D4C56DC12516788C00EFEEB1 /* DebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugView.swift; sourceTree = "<group>"; };
 		D4C56DC42517212A00EFEEB1 /* ForceEmphasizedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForceEmphasizedView.swift; sourceTree = "<group>"; };
 		D4C56DCF251A4F1400EFEEB1 /* Log.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
@@ -76,7 +80,9 @@
 				D41ADC5B2511F8090096D817 /* ContentView.swift */,
 				D4C56DCF251A4F1400EFEEB1 /* Log.swift */,
 				D41ADC6D2511F8280096D817 /* SMSuggestionTextField.swift */,
+				D44818C925850F570084FAED /* SuggestionsModel.swift */,
 				D41ADC91251366FE0096D817 /* SuggestionsView.swift */,
+				D44818C625850F330084FAED /* SuggestionsView2.swift */,
 				D4C56DC12516788C00EFEEB1 /* DebugView.swift */,
 				D4C56DC42517212A00EFEEB1 /* ForceEmphasizedView.swift */,
 				D41ADC5D2511F80B0096D817 /* Assets.xcassets */,
@@ -171,6 +177,8 @@
 				D4C56DD0251A4F1500EFEEB1 /* Log.swift in Sources */,
 				D41ADC6E2511F8280096D817 /* SMSuggestionTextField.swift in Sources */,
 				D41ADC72251212A80096D817 /* DictionaryModel.swift in Sources */,
+				D44818CA25850F570084FAED /* SuggestionsModel.swift in Sources */,
+				D44818C725850F330084FAED /* SuggestionsView2.swift in Sources */,
 				D4C56DC22516788C00EFEEB1 /* DebugView.swift in Sources */,
 				D41ADC5C2511F8090096D817 /* ContentView.swift in Sources */,
 				D41ADC5A2511F8090096D817 /* SuggestionsDemoApp.swift in Sources */,
