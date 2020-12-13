@@ -13,7 +13,7 @@
 		D41ADC612511F80B0096D817 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D41ADC602511F80B0096D817 /* Preview Assets.xcassets */; };
 		D41ADC6B2511F81E0096D817 /* english_german.json in Resources */ = {isa = PBXBuildFile; fileRef = D41ADC692511F81E0096D817 /* english_german.json */; };
 		D41ADC6C2511F81E0096D817 /* german_english.json in Resources */ = {isa = PBXBuildFile; fileRef = D41ADC6A2511F81E0096D817 /* german_english.json */; };
-		D41ADC6E2511F8280096D817 /* SMSuggestionTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = D41ADC6D2511F8280096D817 /* SMSuggestionTextField.swift */; };
+		D41ADC6E2511F8280096D817 /* SuggestionTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = D41ADC6D2511F8280096D817 /* SuggestionTextField.swift */; };
 		D41ADC72251212A80096D817 /* DictionaryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D41ADC71251212A80096D817 /* DictionaryModel.swift */; };
 		D41ADC92251366FE0096D817 /* SuggestionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D41ADC91251366FE0096D817 /* SuggestionsView.swift */; };
 		D44818C725850F330084FAED /* SuggestionsView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = D44818C625850F330084FAED /* SuggestionsView2.swift */; };
@@ -33,7 +33,7 @@
 		D41ADC632511F80B0096D817 /* SuggestionsDemo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SuggestionsDemo.entitlements; sourceTree = "<group>"; };
 		D41ADC692511F81E0096D817 /* english_german.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = english_german.json; sourceTree = "<group>"; };
 		D41ADC6A2511F81E0096D817 /* german_english.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = german_english.json; sourceTree = "<group>"; };
-		D41ADC6D2511F8280096D817 /* SMSuggestionTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SMSuggestionTextField.swift; sourceTree = "<group>"; };
+		D41ADC6D2511F8280096D817 /* SuggestionTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SuggestionTextField.swift; sourceTree = "<group>"; };
 		D41ADC71251212A80096D817 /* DictionaryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryModel.swift; sourceTree = "<group>"; };
 		D41ADC91251366FE0096D817 /* SuggestionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuggestionsView.swift; sourceTree = "<group>"; };
 		D44818C625850F330084FAED /* SuggestionsView2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuggestionsView2.swift; sourceTree = "<group>"; };
@@ -79,7 +79,7 @@
 				D41ADC71251212A80096D817 /* DictionaryModel.swift */,
 				D41ADC5B2511F8090096D817 /* ContentView.swift */,
 				D4C56DCF251A4F1400EFEEB1 /* Log.swift */,
-				D41ADC6D2511F8280096D817 /* SMSuggestionTextField.swift */,
+				D41ADC6D2511F8280096D817 /* SuggestionTextField.swift */,
 				D44818C925850F570084FAED /* SuggestionsModel.swift */,
 				D41ADC91251366FE0096D817 /* SuggestionsView.swift */,
 				D44818C625850F330084FAED /* SuggestionsView2.swift */,
@@ -175,7 +175,7 @@
 				D4C56DC52517212A00EFEEB1 /* ForceEmphasizedView.swift in Sources */,
 				D41ADC92251366FE0096D817 /* SuggestionsView.swift in Sources */,
 				D4C56DD0251A4F1500EFEEB1 /* Log.swift in Sources */,
-				D41ADC6E2511F8280096D817 /* SMSuggestionTextField.swift in Sources */,
+				D41ADC6E2511F8280096D817 /* SuggestionTextField.swift in Sources */,
 				D41ADC72251212A80096D817 /* DictionaryModel.swift in Sources */,
 				D44818CA25850F570084FAED /* SuggestionsModel.swift in Sources */,
 				D44818C725850F330084FAED /* SuggestionsView2.swift in Sources */,

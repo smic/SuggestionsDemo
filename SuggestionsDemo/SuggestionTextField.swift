@@ -1,5 +1,5 @@
 //
-//  SMSuggestionTextField.swift
+//  SuggestionTextField.swift
 //  PubChemDemo
 //
 //  Created by Stephan Michels on 27.08.20.
@@ -12,7 +12,7 @@ import Combine
 
 // original code from https://developer.apple.com/library/archive/samplecode/CustomMenus
 
-struct SMSuggestionTextField: NSViewRepresentable {
+struct SuggestionTextField: NSViewRepresentable {
 	@Binding var text: String
 	var suggestions: [SMSuggestion]
 	

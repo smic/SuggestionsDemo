@@ -23,7 +23,7 @@ struct ContentView: View {
             .frame(height: 300)
 
             
-            SMSuggestionTextField(text: self.$model.currentText, suggestions: self.model.suggestions)
+            SuggestionTextField(text: self.$model.currentText, suggestions: self.model.suggestions)
                 .frame(width: 300)
         }
         .padding()
