@@ -7,6 +7,12 @@
 
 import SwiftUI
 
+extension View {
+    func debug(_ block: @escaping (NSView) -> Void) -> some View {
+        self.background(DebugView(block))
+    }
+}
+
 struct DebugView: NSViewRepresentable {
     let block: (NSView) -> Void
     

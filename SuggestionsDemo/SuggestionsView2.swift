@@ -8,12 +8,13 @@
 import SwiftUI
 
 struct SuggestionsView2: View {
+    @Binding var text: String
     @ObservedObject var model: SuggestionsModel
     
     var body: some View {
         let model = self.model
         let suggestions = model.suggestions
-        print("get suggestions of \(self.model): \(suggestions.count)")
+        print("render suggestions: \(suggestions.count)")
         
         return VStack(spacing: 0) {
             ForEach(suggestions.indices, id: \.self)  { suggestionIndex -> AnyView in
@@ -53,19 +54,18 @@ struct SuggestionsView2: View {
                             .foregroundColor(model.selectedSuggestionIndex == suggestionIndex ? Color.accentColor : Color.clear)
                     )
                     .onHover(perform: { hovering in
+                        print("index: \(suggestionIndex) hovering: \(hovering)")
                         if case let .item(item) = suggestion {
                             if hovering {
-                                model.selectedSuggestionIndex = suggestionIndex
-                                self.model.onChoose?(suggestionIndex, item)
+                                model.chooseSuggestion(index: suggestionIndex, item: item)
                             } else if model.selectedSuggestionIndex == suggestionIndex {
-                                model.selectedSuggestionIndex = nil
-                                self.model.onChoose?(nil, nil)
+                                model.chooseSuggestion(index: nil, item: nil)
                             }
                         }
                     })
                     .onTapGesture {
                         if case let .item(item) = suggestion {
-                            model.onConfirm?(suggestionIndex, item)
+                            model.confirmSuggestion(index: suggestionIndex, item: item, binding: self.$text)
                         }
                     }
                     //                    .preference(key: SuggestionHeightPreferenceKey.self, value: geometry.frame(in: .named("Custom")).height)
@@ -76,6 +76,7 @@ struct SuggestionsView2: View {
         }
         .padding(10)
         .background(Color.white)
+        .debug({ model.window = $0.window })
         .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 }
@@ -100,6 +101,6 @@ struct SuggestionsView2_Previews: PreviewProvider {
         }
         model.selectedSuggestionIndex = 1
         
-        return SuggestionsView2(model: model)
+        return SuggestionsView2(text: .constant(""), model: model)
     }
 }
