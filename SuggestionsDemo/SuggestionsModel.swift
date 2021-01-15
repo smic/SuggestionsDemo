@@ -6,42 +6,25 @@
 //
 
 import Foundation
-import AppKit
 import SwiftUI
 
 final class SuggestionsModel: ObservableObject {
     @Published var suggestions: [SMSuggestion] = []
     @Published var selectedSuggestionIndex: Int?
-//    var selectedSuggestionIndex: Int? {
-//        didSet {
-//            if self.selectedSuggestionIndex != nil {
-//                print("break")
-//            }
-//        }
-//    }
     
     @Published var suggestionsVisible: Bool = false
-    /*var suggestionsVisible: Bool = false {
-        didSet {
-            print("set suggestionsVisible: \(self.suggestionsVisible)")
-            print("Thread: \(Thread.callStackSymbols)")
-        }
-    }*/
-    @Published var textEdited: Bool = false
+
+//    @Published var textEdited: Bool = false
     @Published var suggestionConfirmed: Bool = false
     
-    var window: NSWindow?
+    @Published var width: CGFloat = 100
     
     var onChoose: ((Int?, SMSuggestionItem?) -> Void)?
     var onConfirm: ((Int, SMSuggestionItem) -> Void)?
     
-//    internal func showSuggestions() {
-//        self.suggestionsVisible = true
-//    }
-    
     internal func modifiedText(text: String, binding: Binding<String>) {
         binding.wrappedValue = text
-        self.textEdited = true
+//        self.textEdited = true
         
         self.selectedSuggestionIndex = nil
         self.suggestionsVisible = true
@@ -49,23 +32,11 @@ final class SuggestionsModel: ObservableObject {
     }
     
     internal func cancel() {
-        self.textEdited = false
+//        self.textEdited = false
         self.suggestionConfirmed = false
         self.suggestionsVisible = false
         
         self.selectedSuggestionIndex = nil
-    }
-    
-    internal func delete(text: String, binding: Binding<String>) {
-        binding.wrappedValue = text
-        self.textEdited = true
-        
-        self.selectedSuggestionIndex = nil
-        self.suggestionsVisible = false
-    }
-    
-    internal func changeSelection() {
-        self.suggestionConfirmed = false
     }
     
     internal func moveUp() {
@@ -159,7 +130,6 @@ final class SuggestionsModel: ObservableObject {
     
     internal func confirmSuggestion(index: Int, item: SMSuggestionItem, binding: Binding<String>) {
         
-//        self.cancel()
         self.selectedSuggestionIndex = index
         self.suggestionsVisible = false
 
@@ -167,10 +137,6 @@ final class SuggestionsModel: ObservableObject {
         
         self.suggestionConfirmed = true
         
-//        self.text = item.text
-//        model.suggestionConfirmed = true
-//        model.selectedSuggestionIndex = nil
-//        model.suggestionsVisible = false
         self.onConfirm?(index, item)
     }
 }

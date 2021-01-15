@@ -2,101 +2,80 @@
 //  SuggestionsView.swift
 //  SuggestionsDemo
 //
-//  Created by Stephan Michels on 17.09.20.
+//  Created by Stephan Michels on 12.12.20.
 //
 
 import SwiftUI
 
-struct SuggestionHeightPreferenceKey: PreferenceKey {
-    static var defaultValue: CGFloat = 0
-    
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value += nextValue()
-    }
-    
-    typealias Value = CGFloat
-}
-
 struct SuggestionsView: View {
+    @Binding var text: String
     @ObservedObject var model: SuggestionsModel
-//    @State var height: CGFloat = 0
-    
     
     var body: some View {
         let model = self.model
         let suggestions = model.suggestions
-        print("get suggestions of \(self.model): \(suggestions.count)")
+        print("render suggestions: \(suggestions.count)")
         
-//        return GeometryReader { geometry in
-            return List(selection: self.$model.selectedSuggestionIndex) {
-                ForEach(suggestions.indices, id: \.self)  { suggestionIndex -> AnyView in
-                    //            return List(suggestions.indices, id: \.self, selection: self.$model.selectedSuggestionIndex) { suggestionIndex -> AnyView in
-                    let suggestion = suggestions[suggestionIndex]
-                    //            print("suggestionIndex: \(suggestionIndex) suggestion: \(suggestion)")
-                    return AnyView(
-//                        GeometryReader { geometry in
-                         Group {
+        return VStack(spacing: 0) {
+            ForEach(suggestions.indices, id: \.self)  { suggestionIndex -> AnyView in
+                //            return List(suggestions.indices, id: \.self, selection: self.$model.selectedSuggestionIndex) { suggestionIndex -> AnyView in
+                let suggestion = suggestions[suggestionIndex]
+                //            print("suggestionIndex: \(suggestionIndex) suggestion: \(suggestion)")
+                return AnyView(
+                    //                        GeometryReader { geometry in
+                    Group {
                         switch suggestion {
                         case let .item(item):
-//                            ForceEmphasizedView {
-                                Text(item.title)
-//                            }
-                            //                            .frame(maxWidth: .infinity, minHeight: 20, alignment: .leading)
-                            .onHover(perform: { hovering in
-                                if hovering {
-                                    model.selectedSuggestionIndex = suggestionIndex
-                                    self.model.onChoose?(suggestionIndex, item)
-                                } else if model.selectedSuggestionIndex == suggestionIndex {
-                                    model.selectedSuggestionIndex = nil
-                                    self.model.onChoose?(nil, nil)
-                                }
-                            })
-                            .onTapGesture {
-                                model.onConfirm?(suggestionIndex, item)
-                            }
-                            .id(item.text)
-                            .tag(suggestionIndex)
-                                    .background(Color.red)
+                            //                            ForceEmphasizedView {
+                            Text(item.title)
+                                //                            }
+                                //                            .frame(maxWidth: .infinity, minHeight: 20, alignment: .leading)
+                                .id(item.text)
+                                .tag(suggestionIndex)
                         case let .group(group):
-//                            ForceEmphasizedView {
-                                VStack(alignment: .leading) {
-                                    Divider()
-                                    Text(group.title)
-                                        .foregroundColor(.gray)
-                                        .font(.caption)
-                                        .bold()
-                                }
-//                            }
+                            //                            ForceEmphasizedView {
+                            VStack(alignment: .leading) {
+                                Divider()
+                                Text(group.title)
+                                    .foregroundColor(.gray)
+                                    .font(.caption)
+                                    .bold()
+                            }
+                            //                            }
                             //                            .frame(maxWidth: .infinity, minHeight: 20, alignment: .leading)
                             .tag(suggestionIndex)
                         }
                     }
-//                    .preference(key: SuggestionHeightPreferenceKey.self, value: geometry.frame(in: .named("Custom")).height)
-//                    .log("\(suggestionIndex).row: \(geometry.frame(in: .named("Custom")))")
-//                        }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .foregroundColor(model.selectedSuggestionIndex == suggestionIndex ? .white : .black)
+                    .padding(EdgeInsets(top: 4, leading: 6, bottom: 4, trailing: 6))
+                    .background(
+                        RoundedRectangle(cornerRadius: 5)
+                            .foregroundColor(model.selectedSuggestionIndex == suggestionIndex ? Color.accentColor : Color.clear)
                     )
-                }
-//                GeometryReader { geometry in
-//                    Color.red
-//                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-//                        .log("Last: \(geometry.frame(in: .named("Custom")))")
-//                }
-//            }
-            //            .fixedSize(horizontal: false, vertical: true)
-//            .log("List: \(geometry.size)")
+                    .onHover(perform: { hovering in
+                        print("index: \(suggestionIndex) hovering: \(hovering)")
+                        if case let .item(item) = suggestion {
+                            if hovering {
+                                model.chooseSuggestion(index: suggestionIndex, item: item)
+                            } else if model.selectedSuggestionIndex == suggestionIndex {
+                                model.chooseSuggestion(index: nil, item: nil)
+                            }
+                        }
+                    })
+                    .onTapGesture {
+                        if case let .item(item) = suggestion {
+                            model.confirmSuggestion(index: suggestionIndex, item: item, binding: self.$text)
+                        }
+                    }
+                    //                    .preference(key: SuggestionHeightPreferenceKey.self, value: geometry.frame(in: .named("Custom")).height)
+                    //                    .log("\(suggestionIndex).row: \(geometry.frame(in: .named("Custom")))")
+                    //                        }
+                )
+            }
         }
-        //        .environment(\.controlActiveState, .key)
-        //        .listStyle(PlainListStyle())
-        //        .listStyle(SidebarListStyle())
-        //        .fixedSize(horizontal: false, vertical: true)
-        //        .frame(height: self.height + 2 * 5)
-//            .frame(height: /*CGFloat(suggestions.count * 22 + 2 * 5)*/max(10, self.height))
-//        .onPreferenceChange(SuggestionHeightPreferenceKey.self) { height in
-//            print("result height: \(height)")
-//            self.height = height
-//        }
-//        .coordinateSpace(name: "SuggestionView")
-//        .background(Color.white)
+        .padding(10)
+        .background(Color.white)
         .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 }
@@ -121,6 +100,6 @@ struct SuggestionsView_Previews: PreviewProvider {
         }
         model.selectedSuggestionIndex = 1
         
-        return SuggestionsView(model: model)
+        return SuggestionsView(text: .constant(""), model: model)
     }
 }

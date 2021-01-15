@@ -21,15 +21,14 @@ struct SuggestionInput: View {
             model.selectedSuggestionIndex = nil
         }
         
-//        return TextField("", text: self.$text)
         return SuggestionTextField(text: self.$text, model: model)
-            .borderlessWindow(isVisible: Binding<Bool>(get: { self.model.suggestionsVisible && !self.model.suggestions.isEmpty }, set: { self.model.suggestionsVisible = $0 }),
+            .borderlessWindow(isVisible: Binding<Bool>(get: { model.suggestionsVisible && !model.suggestions.isEmpty }, set: { model.suggestionsVisible = $0 }),
                               behavior: .transient,
                               anchor: .bottomLeading,
                               windowAnchor: .topLeading,
-                              windowOffset: /*.zero*/CGPoint(x: -20, y: -19)) {
-                SuggestionsView2(text: self.$text, model: self.model)
-                    .frame(width: 200)
+                              windowOffset: CGPoint(x: -20 - 12, y: -16)) {
+                SuggestionsView(text: self.$text, model: model)
+                    .frame(width: model.width + 2 * 12)
                 .visualEffect()
                 .clipShape(RoundedRectangle(cornerRadius: 5))
                 .overlay(RoundedRectangle(cornerRadius: 5)
