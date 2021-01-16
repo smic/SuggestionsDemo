@@ -72,8 +72,6 @@ public struct BorderlessWindow<Content>: NSViewRepresentable where Content: View
         
         let window = context.coordinator.window
         
-//        print("1.window frame: \(window.frame)")
-        
         // Ensure that the visiblity has changed
         let isVisible = self.isVisible
         if isVisible != window.isVisible {
@@ -84,7 +82,6 @@ public struct BorderlessWindow<Content>: NSViewRepresentable where Content: View
                 window.makeKeyAndOrderFront(nil)
                 
                 window.alphaValue = 1.0
-//                print("show window")
             } else {
                 NSAnimationContext.runAnimationGroup { context in
                     context.duration = 0.1
@@ -96,15 +93,12 @@ public struct BorderlessWindow<Content>: NSViewRepresentable where Content: View
                     }
                     window.orderOut(nil)
                 }
-//                print("hide window")
             }
         }
         
         // set position of the window
         var viewFrame = view.convert(view.bounds, to: nil)
         viewFrame = view.window?.convertToScreen(viewFrame) ?? viewFrame
-//        print("1.view frame: \(view.frame)")
-//        print("2.view abs frame: \(viewFrame)")
         let viewPoint = viewFrame.point(anchor: self.anchor)
 
         var windowFrame = window.frame
@@ -121,10 +115,7 @@ public struct BorderlessWindow<Content>: NSViewRepresentable where Content: View
             windowFrame.origin.x += shift.x
             windowFrame.origin.y += shift.y
             window.setFrame(windowFrame, display: false)
-            
-//            print("2.window frame: \(window.frame)")
         }
-//        print("3.window frame: \(windowFrame)")
     }
     
     public func makeCoordinator() -> Coordinator {
@@ -188,18 +179,7 @@ public struct BorderlessWindow<Content>: NSViewRepresentable where Content: View
                     return event
                 }
             }
-            
-            self.didResizeSubscription = NotificationCenter.default.publisher(for: NSWindow.didResizeNotification, object: window)
-                .sink { (_) in
-                    print("2.window did resize: \(self.window.frame)")
-                }
-            
-            print("window frame: \(window.frame)")
-        }
-        
-        public func windowDidResize(_ notification: Notification) {
-            print("window did resize: \(self.window.frame)")
-        }
+        }        
     }
 }
 #else

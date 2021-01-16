@@ -20,7 +20,6 @@
 		D448191C258582D70084FAED /* BorderlessWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D448191B258582D60084FAED /* BorderlessWindow.swift */; };
 		D448192225858B1D0084FAED /* SuggestionInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = D448192125858B1D0084FAED /* SuggestionInput.swift */; };
 		D448192525858BBB0084FAED /* VisualEffectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D448192425858BBB0084FAED /* VisualEffectView.swift */; };
-		D4C56DD0251A4F1500EFEEB1 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C56DCF251A4F1400EFEEB1 /* Log.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,7 +39,6 @@
 		D448191B258582D60084FAED /* BorderlessWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BorderlessWindow.swift; sourceTree = "<group>"; };
 		D448192125858B1D0084FAED /* SuggestionInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuggestionInput.swift; sourceTree = "<group>"; };
 		D448192425858BBB0084FAED /* VisualEffectView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VisualEffectView.swift; sourceTree = "<group>"; };
-		D4C56DCF251A4F1400EFEEB1 /* Log.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,7 +76,6 @@
 				D41ADC592511F8090096D817 /* SuggestionsDemoApp.swift */,
 				D41ADC71251212A80096D817 /* DictionaryModel.swift */,
 				D41ADC5B2511F8090096D817 /* ContentView.swift */,
-				D4C56DCF251A4F1400EFEEB1 /* Log.swift */,
 				D448192125858B1D0084FAED /* SuggestionInput.swift */,
 				D41ADC6D2511F8280096D817 /* SuggestionTextField.swift */,
 				D44818C925850F570084FAED /* SuggestionsModel.swift */,
@@ -128,7 +125,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1200;
-				LastUpgradeCheck = 1200;
+				LastUpgradeCheck = 1230;
 				TargetAttributes = {
 					D41ADC552511F8090096D817 = {
 						CreatedOnToolsVersion = 12.0;
@@ -172,7 +169,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D4C56DD0251A4F1500EFEEB1 /* Log.swift in Sources */,
 				D41ADC6E2511F8280096D817 /* SuggestionTextField.swift in Sources */,
 				D41ADC72251212A80096D817 /* DictionaryModel.swift in Sources */,
 				D44818CA25850F570084FAED /* SuggestionsModel.swift in Sources */,
@@ -309,6 +305,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = SuggestionsDemo/SuggestionsDemo.entitlements;
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SuggestionsDemo/Preview Content\"";
@@ -333,6 +330,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = SuggestionsDemo/SuggestionsDemo.entitlements;
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"SuggestionsDemo/Preview Content\"";

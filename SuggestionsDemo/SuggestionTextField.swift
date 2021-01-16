@@ -119,16 +119,7 @@ struct SuggestionTextField: NSViewRepresentable {
 		// MARK: - NSTextField Delegate Methods
         
 		@objc func controlTextDidChange(_ notification: Notification) {
-//			guard let fieldEditor = self.textField.window?.fieldEditor(false, for: control) else {
-//				return
-//			}
-//
-//			let text = fieldEditor.string
-            let text = self.textField.stringValue 
-//            print("controlTextDidChange: \"\(text)\", selectedRange: \(fieldEditor.selectedRange)")
-			
-//			self.editedText = string
-//			self.editing = true
+            let text = self.textField.stringValue
 			
             self.model.modifiedText(text: text, binding: self.$text)
 		}
@@ -138,7 +129,6 @@ struct SuggestionTextField: NSViewRepresentable {
         }
 		
 		@objc func control(_ control: NSControl, textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
-//            print("doCommandBy: \(commandSelector)")
 			if commandSelector == #selector(NSResponder.moveUp(_:)) {
                 guard self.model.suggestionsVisible else {
                     return false

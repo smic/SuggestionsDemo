@@ -14,17 +14,12 @@ final class SuggestionsModel: ObservableObject {
     
     @Published var suggestionsVisible: Bool = false
 
-//    @Published var textEdited: Bool = false
     @Published var suggestionConfirmed: Bool = false
     
     @Published var width: CGFloat = 100
     
-    var onChoose: ((Int?, SMSuggestionItem?) -> Void)?
-    var onConfirm: ((Int, SMSuggestionItem) -> Void)?
-    
     internal func modifiedText(text: String, binding: Binding<String>) {
         binding.wrappedValue = text
-//        self.textEdited = true
         
         self.selectedSuggestionIndex = nil
         self.suggestionsVisible = true
@@ -32,7 +27,6 @@ final class SuggestionsModel: ObservableObject {
     }
     
     internal func cancel() {
-//        self.textEdited = false
         self.suggestionConfirmed = false
         self.suggestionsVisible = false
         
@@ -48,10 +42,8 @@ final class SuggestionsModel: ObservableObject {
 
         guard let (index, item) = self.previousItemRow(for: selectedRow) else {
             self.selectedSuggestionIndex = nil
-//                self.chooseSuggestion(index: nil, item: nil)
             return
         }
-//            self.chooseSuggestion(index: index, item: item)
         self.selectedSuggestionIndex = index
     }
 
@@ -62,7 +54,6 @@ final class SuggestionsModel: ObservableObject {
             guard let (index, item) = self.firstItem else {
                 return
             }
-//                self.chooseSuggestion(index: index, item: item)
             self.selectedSuggestionIndex = index
             return
         }
@@ -70,7 +61,6 @@ final class SuggestionsModel: ObservableObject {
         guard let (index, item) = self.nextItem(for: selectedIndex) else {
             return
         }
-//            self.chooseSuggestion(index: index, item: item)
         self.selectedSuggestionIndex = index
     }
     
@@ -125,7 +115,6 @@ final class SuggestionsModel: ObservableObject {
     internal func chooseSuggestion(index: Int?, item: SMSuggestionItem?) {
         self.selectedSuggestionIndex = index
         self.suggestionConfirmed = false
-        self.onChoose?(index, item)
     }
     
     internal func confirmSuggestion(index: Int, item: SMSuggestionItem, binding: Binding<String>) {
@@ -136,7 +125,5 @@ final class SuggestionsModel: ObservableObject {
         binding.wrappedValue = item.text
         
         self.suggestionConfirmed = true
-        
-        self.onConfirm?(index, item)
     }
 }
