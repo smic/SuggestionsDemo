@@ -7,82 +7,89 @@
 
 import SwiftUI
 
-struct SuggestionsView: View {
-    @Binding var text: String
-    @ObservedObject var model: SuggestionsModel
+struct SuggestionView<V: Equatable>: View {
+    var suggestion: SMSuggestion<V>
+    @ObservedObject var model: SuggestionsModel<V>
     
     var body: some View {
+        let suggestion = self.suggestion
         let model = self.model
-        let suggestions = model.suggestions
         
-        return VStack(spacing: 0) {
-            ForEach(suggestions.indices, id: \.self)  { suggestionIndex in
-                return Group {
-                    switch suggestions[suggestionIndex] {
-                    case let .item(item):
-                        Text(item.title)
-                            .id(item.text)
-                            .tag(suggestionIndex)
-                    case let .group(group):
-                        VStack(alignment: .leading) {
-                            Divider()
-                            Text(group.title)
-                                .foregroundColor(.gray)
-                                .font(.caption)
-                                .bold()
-                        }
-                        .tag(suggestionIndex)
-                    }
+        return Text(suggestion.text)
+            .id(suggestion.text)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .foregroundColor(model.selectedSuggestion == suggestion ? .white : .primary)
+            .padding(EdgeInsets(top: 4, leading: 6, bottom: 4, trailing: 6))
+            .background(
+                RoundedRectangle(cornerRadius: 5)
+                    .foregroundColor(model.selectedSuggestion == suggestion ? Color.accentColor : Color.clear)
+            )
+            .onHover(perform: { hovering in
+                if hovering {
+                    model.chooseSuggestion(suggestion)
+                } else if model.selectedSuggestion == suggestion {
+                    model.chooseSuggestion(nil)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .foregroundColor(model.selectedSuggestionIndex == suggestionIndex ? .white : .black)
-                .padding(EdgeInsets(top: 4, leading: 6, bottom: 4, trailing: 6))
-                .background(
-                    RoundedRectangle(cornerRadius: 5)
-                        .foregroundColor(model.selectedSuggestionIndex == suggestionIndex ? Color.accentColor : Color.clear)
-                )
-                .onHover(perform: { hovering in
-                    if case let .item(item) = suggestions[suggestionIndex] {
-                        if hovering {
-                            model.chooseSuggestion(index: suggestionIndex, item: item)
-                        } else if model.selectedSuggestionIndex == suggestionIndex {
-                            model.chooseSuggestion(index: nil, item: nil)
-                        }
-                    }
-                })
-                .onTapGesture {
-                    if case let .item(item) = suggestions[suggestionIndex] {
-                        model.confirmSuggestion(index: suggestionIndex, item: item, binding: self.$text)
-                    }
+            })
+            .onTapGesture {
+                model.confirmSuggestion(suggestion)
+            }
+    }
+}
+
+struct SuggestionGroupView<V: Equatable>: View {
+    var suggestionGroup: SMSuggestionGroup<V>
+    var showDivider: Bool
+    @ObservedObject var model: SuggestionsModel<V>
+    
+    var body: some View {
+        let suggestionGroup = self.suggestionGroup
+        let model = self.model
+        
+        return VStack(alignment: .leading) {
+            if self.showDivider {
+                Divider()
+                    .padding(.top, 7)
+            }
+            if let title = suggestionGroup.title {
+                Text(title)
+                    .foregroundColor(.gray)
+                    .font(.system(size: 12, weight: .bold))
+            }
+            VStack(spacing: 0) {
+                ForEach(Array(suggestionGroup.suggestions.enumerated()), id: \.0)  { (_, suggestion) in
+                    SuggestionView(suggestion: suggestion, model: model)
                 }
             }
         }
+    }
+}
+
+struct SuggestionPopup<V: Equatable>: View {
+    @ObservedObject var model: SuggestionsModel<V>
+    
+    var body: some View {
+        let model = self.model
+        let suggestionGroups = model.suggestionGroups
+        
+        return VStack(spacing: 0) {
+            ForEach(Array(suggestionGroups.enumerated()), id: \.0)  { (suggestionGroupIndex, suggestionGroup) in
+                SuggestionGroupView(suggestionGroup: suggestionGroup, showDivider: suggestionGroupIndex > 0, model: model)
+            }
+        }
         .padding(10)
-        .background(Color.white)
-        .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 }
 
 struct SuggestionsView_Previews: PreviewProvider {
     static var previews: some View {
-        let model = SuggestionsModel()
-        do {
-            var group = SMSuggestionGroup()
-            group.title = "English"
-            model.suggestions.append(.group(group))
-        }
-        do {
-            var item = SMSuggestionItem()
-            item.title = "Eight"
-            model.suggestions.append(.item(item))
-        }
-        do {
-            var item = SMSuggestionItem()
-            item.title = "Elder"
-            model.suggestions.append(.item(item))
-        }
-        model.selectedSuggestionIndex = 1
+        let suggestion1 = SMSuggestion(text: "Eight", value: "Eight")
+        let suggestion2 = SMSuggestion(text: "Elder", value: "Elder")
+        let group = SMSuggestionGroup(title: "English", suggestions: [suggestion1, suggestion2])
+        let model = SuggestionsModel<String>()
+        model.suggestionGroups = [group]
+        model.selectedSuggestion = suggestion2
         
-        return SuggestionsView(text: .constant(""), model: model)
+        return SuggestionPopup(model: model)
     }
 }

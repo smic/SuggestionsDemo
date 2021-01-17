@@ -8,9 +8,9 @@
 import Foundation
 import SwiftUI
 
-final class SuggestionsModel: ObservableObject {
-    @Published var suggestions: [SMSuggestion] = []
-    @Published var selectedSuggestionIndex: Int?
+internal final class SuggestionsModel<V: Equatable>: ObservableObject {
+    @Published var suggestionGroups: [SMSuggestionGroup<V>] = []
+    @Published var selectedSuggestion: SMSuggestion<V>?
     
     @Published var suggestionsVisible: Bool = false
 
@@ -18,11 +18,13 @@ final class SuggestionsModel: ObservableObject {
     
     @Published var width: CGFloat = 100
     
-    internal func modifiedText(text: String, binding: Binding<String>) {
-        binding.wrappedValue = text
+    var textBinding: Binding<String>?
+    
+    internal func modifiedText(_ text: String) {
+        self.textBinding?.wrappedValue = text
         
-        self.selectedSuggestionIndex = nil
-        self.suggestionsVisible = true
+        self.selectedSuggestion = nil
+        self.suggestionsVisible = text.isEmpty ? false : true
         self.suggestionConfirmed = false
     }
     
@@ -30,99 +32,78 @@ final class SuggestionsModel: ObservableObject {
         self.suggestionConfirmed = false
         self.suggestionsVisible = false
         
-        self.selectedSuggestionIndex = nil
+        self.selectedSuggestion = nil
+    }
+    
+    private var suggestions: [SMSuggestion<V>] {
+        self.suggestionGroups.flatMap(\.suggestions)
     }
     
     internal func moveUp() {
         self.suggestionConfirmed = false
         
-        guard let selectedRow = self.selectedSuggestionIndex else {
+        guard let selectedSuggestion = self.selectedSuggestion else {
             return
         }
 
-        guard let (index, item) = self.previousItemRow(for: selectedRow) else {
-            self.selectedSuggestionIndex = nil
+        guard let suggestion = self.previousSuggestion(for: selectedSuggestion) else {
+            self.selectedSuggestion = nil
             return
         }
-        self.selectedSuggestionIndex = index
+        self.selectedSuggestion = suggestion
     }
 
     internal func moveDown() {
         self.suggestionConfirmed = false
         
-        guard let selectedIndex = self.selectedSuggestionIndex else {
-            guard let (index, item) = self.firstItem else {
+        guard let selectedSuggestion = self.selectedSuggestion else {
+            guard let suggestion = self.firstSuggestion else {
                 return
             }
-            self.selectedSuggestionIndex = index
+            self.selectedSuggestion = suggestion
             return
         }
         
-        guard let (index, item) = self.nextItem(for: selectedIndex) else {
+        guard let suggestion = self.nextSuggestion(for: selectedSuggestion) else {
             return
         }
-        self.selectedSuggestionIndex = index
+        self.selectedSuggestion = suggestion
     }
     
-    internal var firstItem: (Int, SMSuggestionItem)? {
+    internal var firstSuggestion: SMSuggestion<V>? {
         let suggestions = self.suggestions
-        guard !suggestions.isEmpty else {
-            return nil
-        }
-        
-        for (currentRow, suggestion) in suggestions.enumerated() {
-            if case let .item(item) = suggestion {
-                return (currentRow, item)
-            }
-        }
-        return nil;
+        return suggestions.first
     }
 
-    internal func nextItem(for index: Int) -> (Int, SMSuggestionItem)? {
+    internal func nextSuggestion(for suggestion: SMSuggestion<V>) -> SMSuggestion<V>? {
         let suggestions = self.suggestions
-        guard 0 <= index || index < suggestions.count else {
+        guard let index = suggestions.firstIndex(of: suggestion),
+              index + 1 < suggestions.count else {
             return nil
         }
-        
-        for (currentIndex, suggestion) in suggestions.enumerated() {
-            guard currentIndex > index else {
-                continue
-            }
-            if case let .item(currentItem) = suggestion {
-                return (currentIndex, currentItem)
-            }
-        }
-        return nil
+        return suggestions[index + 1]
     }
 
-    internal func previousItemRow(for index: Int) -> (Int, SMSuggestionItem)? {
+    internal func previousSuggestion(for suggestion: SMSuggestion<V>) -> SMSuggestion<V>? {
         let suggestions = self.suggestions
-        guard 0 <= index || index < suggestions.count else {
+        guard let index = suggestions.firstIndex(of: suggestion),
+              index - 1 >= 0 else {
             return nil
         }
-        
-        for (currentIndex, suggestion) in suggestions.enumerated().reversed() {
-            guard currentIndex < index else {
-                continue
-            }
-            if case let .item(item) = suggestion {
-                return (currentIndex, item)
-            }
-        }
-        return nil
+        return suggestions[index - 1]
     }
     
-    internal func chooseSuggestion(index: Int?, item: SMSuggestionItem?) {
-        self.selectedSuggestionIndex = index
+    internal func chooseSuggestion(_ suggestion: SMSuggestion<V>?) {
+        self.selectedSuggestion = suggestion
         self.suggestionConfirmed = false
     }
     
-    internal func confirmSuggestion(index: Int, item: SMSuggestionItem, binding: Binding<String>) {
+    internal func confirmSuggestion(_ suggestion: SMSuggestion<V>) {
         
-        self.selectedSuggestionIndex = index
+        self.selectedSuggestion = suggestion
         self.suggestionsVisible = false
 
-        binding.wrappedValue = item.text
+        self.textBinding?.wrappedValue = suggestion.text
         
         self.suggestionConfirmed = true
     }

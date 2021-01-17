@@ -15,11 +15,11 @@
 		D41ADC6C2511F81E0096D817 /* german_english.json in Resources */ = {isa = PBXBuildFile; fileRef = D41ADC6A2511F81E0096D817 /* german_english.json */; };
 		D41ADC6E2511F8280096D817 /* SuggestionTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = D41ADC6D2511F8280096D817 /* SuggestionTextField.swift */; };
 		D41ADC72251212A80096D817 /* DictionaryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D41ADC71251212A80096D817 /* DictionaryModel.swift */; };
+		D41C3A1E25B385230077A1B8 /* VisualEffectBlur.swift in Sources */ = {isa = PBXBuildFile; fileRef = D41C3A1D25B385230077A1B8 /* VisualEffectBlur.swift */; };
 		D44818C725850F330084FAED /* SuggestionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D44818C625850F330084FAED /* SuggestionsView.swift */; };
 		D44818CA25850F570084FAED /* SuggestionsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D44818C925850F570084FAED /* SuggestionsModel.swift */; };
 		D448191C258582D70084FAED /* BorderlessWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D448191B258582D60084FAED /* BorderlessWindow.swift */; };
 		D448192225858B1D0084FAED /* SuggestionInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = D448192125858B1D0084FAED /* SuggestionInput.swift */; };
-		D448192525858BBB0084FAED /* VisualEffectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D448192425858BBB0084FAED /* VisualEffectView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,11 +34,11 @@
 		D41ADC6A2511F81E0096D817 /* german_english.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = german_english.json; sourceTree = "<group>"; };
 		D41ADC6D2511F8280096D817 /* SuggestionTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SuggestionTextField.swift; sourceTree = "<group>"; };
 		D41ADC71251212A80096D817 /* DictionaryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryModel.swift; sourceTree = "<group>"; };
+		D41C3A1D25B385230077A1B8 /* VisualEffectBlur.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VisualEffectBlur.swift; sourceTree = "<group>"; };
 		D44818C625850F330084FAED /* SuggestionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuggestionsView.swift; sourceTree = "<group>"; };
 		D44818C925850F570084FAED /* SuggestionsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuggestionsModel.swift; sourceTree = "<group>"; };
 		D448191B258582D60084FAED /* BorderlessWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BorderlessWindow.swift; sourceTree = "<group>"; };
 		D448192125858B1D0084FAED /* SuggestionInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuggestionInput.swift; sourceTree = "<group>"; };
-		D448192425858BBB0084FAED /* VisualEffectView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VisualEffectView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,7 +81,7 @@
 				D44818C925850F570084FAED /* SuggestionsModel.swift */,
 				D44818C625850F330084FAED /* SuggestionsView.swift */,
 				D448191B258582D60084FAED /* BorderlessWindow.swift */,
-				D448192425858BBB0084FAED /* VisualEffectView.swift */,
+				D41C3A1D25B385230077A1B8 /* VisualEffectBlur.swift */,
 				D41ADC5D2511F80B0096D817 /* Assets.xcassets */,
 				D41ADC622511F80B0096D817 /* Info.plist */,
 				D41ADC632511F80B0096D817 /* SuggestionsDemo.entitlements */,
@@ -174,9 +174,9 @@
 				D44818CA25850F570084FAED /* SuggestionsModel.swift in Sources */,
 				D44818C725850F330084FAED /* SuggestionsView.swift in Sources */,
 				D448192225858B1D0084FAED /* SuggestionInput.swift in Sources */,
+				D41C3A1E25B385230077A1B8 /* VisualEffectBlur.swift in Sources */,
 				D41ADC5C2511F8090096D817 /* ContentView.swift in Sources */,
 				D41ADC5A2511F8090096D817 /* SuggestionsDemoApp.swift in Sources */,
-				D448192525858BBB0084FAED /* VisualEffectView.swift in Sources */,
 				D448191C258582D70084FAED /* BorderlessWindow.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

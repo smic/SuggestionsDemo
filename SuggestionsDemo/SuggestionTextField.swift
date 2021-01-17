@@ -12,28 +12,28 @@ import Combine
 
 // original code from https://developer.apple.com/library/archive/samplecode/CustomMenus
 
-struct SuggestionTextField: NSViewRepresentable {
+struct SuggestionTextField<V: Equatable>: NSViewRepresentable {
     @Binding var text: String
-    @ObservedObject var model: SuggestionsModel
+    @ObservedObject var model: SuggestionsModel<V>
 	
-	func makeNSView(context: Context) -> NSTextField {
-		let textField = NSTextField(frame: .zero)
-		textField.controlSize = .regular
-		textField.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: textField.controlSize))
-		textField.translatesAutoresizingMaskIntoConstraints = false
-		textField.setContentCompressionResistancePriority(NSLayoutConstraint.Priority(rawValue: 1), for: .horizontal)
-		textField.setContentHuggingPriority(NSLayoutConstraint.Priority(rawValue: 1), for: .horizontal)
-		textField.delegate = context.coordinator
+	func makeNSView(context: Context) -> NSSearchField {
+		let searchField = NSSearchField(frame: .zero)
+		searchField.controlSize = .regular
+		searchField.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: searchField.controlSize))
+		searchField.translatesAutoresizingMaskIntoConstraints = false
+		searchField.setContentCompressionResistancePriority(NSLayoutConstraint.Priority(rawValue: 1), for: .horizontal)
+		searchField.setContentHuggingPriority(NSLayoutConstraint.Priority(rawValue: 1), for: .horizontal)
+		searchField.delegate = context.coordinator
 		
-		let textFieldCell = textField.cell!
-		textFieldCell.lineBreakMode = .byWordWrapping
+		let searchFieldCell = searchField.cell!
+		searchFieldCell.lineBreakMode = .byWordWrapping
 		
-		context.coordinator.textField = textField
+		context.coordinator.searchField = searchField
 		
-		return textField
+		return searchField
 	}
 	
-	func updateNSView(_ textField: NSTextField, context: Context) {
+	func updateNSView(_ searchField: NSSearchField, context: Context) {
         let model = self.model
         let text = self.text
         
@@ -45,30 +45,29 @@ struct SuggestionTextField: NSViewRepresentable {
             coordinator.updatingSelectedRange = false
         }
         
-        if let selectedSuggestionIndex = model.selectedSuggestionIndex,
-           case let .item(item) = model.suggestions[selectedSuggestionIndex] {
-            let itemText = item.text
+        if let selectedSuggestion = model.selectedSuggestion {
+            let suggestionText = selectedSuggestion.text
             
-            if textField.stringValue != itemText {
-                textField.stringValue = itemText
+            if searchField.stringValue != suggestionText {
+                searchField.stringValue = suggestionText
             }
             
-            if let fieldEditor = textField.window?.fieldEditor(false, for: textField) {
+            if let fieldEditor = searchField.window?.fieldEditor(false, for: searchField) {
                 if model.suggestionConfirmed {
-                    let range = NSRange(itemText.startIndex..<itemText.endIndex, in: fieldEditor.string)
+                    let range = NSRange(suggestionText.startIndex..<suggestionText.endIndex, in: fieldEditor.string)
                     if fieldEditor.selectedRange != range {
                         fieldEditor.selectedRange = range
                     }
-                } else if item.text.hasPrefix(text) {
-                    let range = NSRange(itemText.index(itemText.startIndex, offsetBy: text.count)..<itemText.index(itemText.startIndex, offsetBy: itemText.count), in: fieldEditor.string)
+                } else if suggestionText.hasPrefix(text) {
+                    let range = NSRange(suggestionText.index(suggestionText.startIndex, offsetBy: text.count)..<suggestionText.index(suggestionText.startIndex, offsetBy: suggestionText.count), in: fieldEditor.string)
                     if fieldEditor.selectedRange != range {
                         fieldEditor.selectedRange = range
                     }
                 }
             }
         } else {
-            if textField.stringValue != self.text {
-                textField.stringValue = self.text
+            if searchField.stringValue != self.text {
+                searchField.stringValue = self.text
             }
         }
 	}
@@ -77,14 +76,14 @@ struct SuggestionTextField: NSViewRepresentable {
         return Coordinator(text: self.$text, model: self.model)
 	}
     
-	class Coordinator: NSObject, NSTextFieldDelegate, NSWindowDelegate, NSTableViewDataSource, NSTableViewDelegate {
+	class Coordinator: NSObject, NSSearchFieldDelegate, NSWindowDelegate, NSTableViewDataSource, NSTableViewDelegate {
 		@Binding var text: String
-        var model: SuggestionsModel
+        var model: SuggestionsModel<V>
         var didChangeSelectionSubscription: AnyCancellable?
         var frameDidChangeSubscription: AnyCancellable?
         var updatingSelectedRange: Bool = false
 		
-		init(text: Binding<String>, model: SuggestionsModel) {
+		init(text: Binding<String>, model: SuggestionsModel<V>) {
 			self._text = text
             self.model = model
             
@@ -93,22 +92,22 @@ struct SuggestionTextField: NSViewRepresentable {
             self.didChangeSelectionSubscription = NotificationCenter.default.publisher(for: NSTextView.didChangeSelectionNotification)
                 .sink(receiveValue: { notification in
                     guard !self.updatingSelectedRange,
-                          let fieldEditor = self.textField.window?.fieldEditor(false, for: self.textField),
+                          let fieldEditor = self.searchField.window?.fieldEditor(false, for: self.searchField),
                           let textView = notification.object as? NSTextView,
                           fieldEditor === textView else {
                         return
                     }
-                    self.model.chooseSuggestion(index: nil, item: nil)
+                    self.model.chooseSuggestion(nil)
                 })
 		}
 		
-        var textField: NSTextField! {
+        var searchField: NSSearchField! {
             didSet {
-                if let textField = self.textField {
-                    textField.postsFrameChangedNotifications = true
-                    self.frameDidChangeSubscription = NotificationCenter.default.publisher(for: NSView.frameDidChangeNotification, object: textField)
+                if let searchField = self.searchField {
+                    searchField.postsFrameChangedNotifications = true
+                    self.frameDidChangeSubscription = NotificationCenter.default.publisher(for: NSView.frameDidChangeNotification, object: searchField)
                         .sink(receiveValue: { (_) in
-                            self.model.width = self.textField.frame.width
+                            self.model.width = self.searchField.frame.width
                         })
                 } else {
                     self.frameDidChangeSubscription = nil
@@ -116,12 +115,12 @@ struct SuggestionTextField: NSViewRepresentable {
             }
         }
 
-		// MARK: - NSTextField Delegate Methods
+		// MARK: - NSSearchField Delegate Methods
         
 		@objc func controlTextDidChange(_ notification: Notification) {
-            let text = self.textField.stringValue
+            let text = self.searchField.stringValue
 			
-            self.model.modifiedText(text: text, binding: self.$text)
+            self.model.modifiedText(text)
 		}
         
         func controlTextDidEndEditing(_ obj: Notification) {
@@ -147,15 +146,17 @@ struct SuggestionTextField: NSViewRepresentable {
 			
 			if commandSelector == #selector(NSResponder.complete(_:)) ||
                 commandSelector == #selector(NSResponder.cancelOperation(_:)) {
+                guard self.model.suggestionsVisible else {
+                    return false
+                }
                 self.model.cancel()
 				
 				return true
 			}
 			
 			if commandSelector == #selector(NSResponder.insertNewline(_:)) {
-                if let suggestionIndex = self.model.selectedSuggestionIndex,
-                   case let .item(item) = self.model.suggestions[suggestionIndex] {
-                    self.model.confirmSuggestion(index: suggestionIndex, item: item, binding: self.$text)
+                if let suggestion = self.model.selectedSuggestion {
+                    self.model.confirmSuggestion(suggestion)
                 }
 				
 				return true

@@ -7,33 +7,54 @@
 
 import SwiftUI
 
-struct SuggestionInput: View {
-    @Binding var text: String
-    var suggestions: [SMSuggestion]
+struct SMSuggestion<V: Equatable>: Equatable {
+    var text: String = ""
+    var value: V
     
-    @StateObject var model = SuggestionsModel()
+    static func ==(_ lhs: SMSuggestion<V>, _ rhs: SMSuggestion<V>) -> Bool {
+        return lhs.value == rhs.value
+    }
+}
+
+struct SMSuggestionGroup<V: Equatable>: Equatable {
+    var title: String?
+    var suggestions: [SMSuggestion<V>]
+    
+    static func ==(_ lhs: SMSuggestionGroup<V>, _ rhs: SMSuggestionGroup<V>) -> Bool {
+        return lhs.suggestions == rhs.suggestions
+    }
+}
+
+struct SuggestionInput<V: Equatable>: View {
+    @Binding var text: String
+    var suggestionGroups: [SMSuggestionGroup<V>]
+    
+    @StateObject var model = SuggestionsModel<V>()
     
     var body: some View {
         let model = self.model
-        if model.suggestions.count != self.suggestions.count {
-            model.suggestions = self.suggestions
+        if model.suggestionGroups != self.suggestionGroups {
+            model.suggestionGroups = self.suggestionGroups
             
-            model.selectedSuggestionIndex = nil
+            model.selectedSuggestion = nil
         }
+        model.textBinding = self.$text
         
         return SuggestionTextField(text: self.$text, model: model)
-            .borderlessWindow(isVisible: Binding<Bool>(get: { model.suggestionsVisible && !model.suggestions.isEmpty }, set: { model.suggestionsVisible = $0 }),
+            .borderlessWindow(isVisible: Binding<Bool>(get: { model.suggestionsVisible && !model.suggestionGroups.isEmpty }, set: { model.suggestionsVisible = $0 }),
                               behavior: .transient,
                               anchor: .bottomLeading,
                               windowAnchor: .topLeading,
-                              windowOffset: CGPoint(x: -20 - 12, y: -16)) {
-                SuggestionsView(text: self.$text, model: model)
-                    .frame(width: model.width + 2 * 12)
-                .visualEffect()
-                .clipShape(RoundedRectangle(cornerRadius: 5))
-                .overlay(RoundedRectangle(cornerRadius: 5)
+                              windowOffset: CGPoint(x: -20, y: -16)) {
+                SuggestionPopup(model: model)
+                    .frame(width: model.width)
+                    .background(VisualEffectBlur(material: .popover, blendingMode: .behindWindow, cornerRadius: 8))
+//                    .visualEffect(.adaptive(.windowBackground))
+//                .clipShape(RoundedRectangle(cornerRadius: 5))
+                .overlay(RoundedRectangle(cornerRadius: 8)
                             .stroke(lineWidth: 1)
-                            .foregroundColor(Color(white: 0.6, opacity: 0.2)))
+                            .foregroundColor(Color(white: 0.6, opacity: 0.2))
+                )
                 .shadow(color: Color(white: 0, opacity: 0.10),
                         radius: 5, x: 0, y: 2)
                 .padding(20)

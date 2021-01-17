@@ -23,7 +23,7 @@ struct ContentView: View {
             .frame(height: 300)
 
             SuggestionInput(text: self.$model.currentText,
-                            suggestions: self.model.suggestions)
+                            suggestionGroups: self.model.suggestionGroups)
                 .frame(width: 300)
         }
         .padding()
