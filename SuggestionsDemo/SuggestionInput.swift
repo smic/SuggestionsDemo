@@ -7,27 +7,27 @@
 
 import SwiftUI
 
-struct SMSuggestion<V: Equatable>: Equatable {
+struct Suggestion<V: Equatable>: Equatable {
     var text: String = ""
     var value: V
     
-    static func ==(_ lhs: SMSuggestion<V>, _ rhs: SMSuggestion<V>) -> Bool {
+    static func ==(_ lhs: Suggestion<V>, _ rhs: Suggestion<V>) -> Bool {
         return lhs.value == rhs.value
     }
 }
 
-struct SMSuggestionGroup<V: Equatable>: Equatable {
+struct SuggestionGroup<V: Equatable>: Equatable {
     var title: String?
-    var suggestions: [SMSuggestion<V>]
+    var suggestions: [Suggestion<V>]
     
-    static func ==(_ lhs: SMSuggestionGroup<V>, _ rhs: SMSuggestionGroup<V>) -> Bool {
+    static func ==(_ lhs: SuggestionGroup<V>, _ rhs: SuggestionGroup<V>) -> Bool {
         return lhs.suggestions == rhs.suggestions
     }
 }
 
 struct SuggestionInput<V: Equatable>: View {
     @Binding var text: String
-    var suggestionGroups: [SMSuggestionGroup<V>]
+    var suggestionGroups: [SuggestionGroup<V>]
     
     @StateObject var model = SuggestionsModel<V>()
     

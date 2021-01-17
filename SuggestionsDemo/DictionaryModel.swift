@@ -15,7 +15,7 @@ final class DictionaryModel: ObservableObject {
     var germanTranslations: [String:String]
     
     @Published var currentText: String = ""
-    @Published var suggestionGroups: [SMSuggestionGroup<String>] = []
+    @Published var suggestionGroups: [SuggestionGroup<String>] = []
     @Published var currentTranslation: String?
     
     private var cancellables: Set<AnyCancellable> = []
@@ -38,22 +38,22 @@ final class DictionaryModel: ObservableObject {
         self.$currentText
             .debounce(for: 0.3, scheduler: RunLoop.main)
             .removeDuplicates()
-            .map { text -> [SMSuggestionGroup<String>] in
+            .map { text -> [SuggestionGroup<String>] in
                 guard !text.isEmpty else {
                     return []
                 }
-                let englishSuggestions = self.englishWords.lazy.filter({ $0.hasPrefix(text) }).prefix(10).map { word -> SMSuggestion<String> in
-                    SMSuggestion(text: word, value: word)
+                let englishSuggestions = self.englishWords.lazy.filter({ $0.hasPrefix(text) }).prefix(10).map { word -> Suggestion<String> in
+                    Suggestion(text: word, value: word)
                 }
-                let germanSuggestions = self.germanWords.lazy.filter({ $0.hasPrefix(text) }).prefix(10).map { word -> SMSuggestion<String> in
-                    SMSuggestion(text: word, value: word)
+                let germanSuggestions = self.germanWords.lazy.filter({ $0.hasPrefix(text) }).prefix(10).map { word -> Suggestion<String> in
+                    Suggestion(text: word, value: word)
                 }
-                var suggestionGroups: [SMSuggestionGroup<String>] = []
+                var suggestionGroups: [SuggestionGroup<String>] = []
                 if !englishSuggestions.isEmpty {
-                    suggestionGroups.append(SMSuggestionGroup<String>(title: "English", suggestions: Array(englishSuggestions)))
+                    suggestionGroups.append(SuggestionGroup<String>(title: "English", suggestions: Array(englishSuggestions)))
                 }
                 if !germanSuggestions.isEmpty {
-                    suggestionGroups.append(SMSuggestionGroup<String>(title: "German", suggestions: Array(germanSuggestions)))
+                    suggestionGroups.append(SuggestionGroup<String>(title: "German", suggestions: Array(germanSuggestions)))
                 }
                 return suggestionGroups
             }

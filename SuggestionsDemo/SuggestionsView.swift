@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SuggestionView<V: Equatable>: View {
-    var suggestion: SMSuggestion<V>
+    var suggestion: Suggestion<V>
     @ObservedObject var model: SuggestionsModel<V>
     
     var body: some View {
@@ -38,7 +38,7 @@ struct SuggestionView<V: Equatable>: View {
 }
 
 struct SuggestionGroupView<V: Equatable>: View {
-    var suggestionGroup: SMSuggestionGroup<V>
+    var suggestionGroup: SuggestionGroup<V>
     var showDivider: Bool
     @ObservedObject var model: SuggestionsModel<V>
     
@@ -83,9 +83,9 @@ struct SuggestionPopup<V: Equatable>: View {
 
 struct SuggestionsView_Previews: PreviewProvider {
     static var previews: some View {
-        let suggestion1 = SMSuggestion(text: "Eight", value: "Eight")
-        let suggestion2 = SMSuggestion(text: "Elder", value: "Elder")
-        let group = SMSuggestionGroup(title: "English", suggestions: [suggestion1, suggestion2])
+        let suggestion1 = Suggestion(text: "Eight", value: "Eight")
+        let suggestion2 = Suggestion(text: "Elder", value: "Elder")
+        let group = SuggestionGroup(title: "English", suggestions: [suggestion1, suggestion2])
         let model = SuggestionsModel<String>()
         model.suggestionGroups = [group]
         model.selectedSuggestion = suggestion2

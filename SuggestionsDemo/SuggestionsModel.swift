@@ -9,8 +9,8 @@ import Foundation
 import SwiftUI
 
 internal final class SuggestionsModel<V: Equatable>: ObservableObject {
-    @Published var suggestionGroups: [SMSuggestionGroup<V>] = []
-    @Published var selectedSuggestion: SMSuggestion<V>?
+    @Published var suggestionGroups: [SuggestionGroup<V>] = []
+    @Published var selectedSuggestion: Suggestion<V>?
     
     @Published var suggestionsVisible: Bool = false
 
@@ -35,7 +35,7 @@ internal final class SuggestionsModel<V: Equatable>: ObservableObject {
         self.selectedSuggestion = nil
     }
     
-    private var suggestions: [SMSuggestion<V>] {
+    private var suggestions: [Suggestion<V>] {
         self.suggestionGroups.flatMap(\.suggestions)
     }
     
@@ -70,12 +70,12 @@ internal final class SuggestionsModel<V: Equatable>: ObservableObject {
         self.selectedSuggestion = suggestion
     }
     
-    internal var firstSuggestion: SMSuggestion<V>? {
+    internal var firstSuggestion: Suggestion<V>? {
         let suggestions = self.suggestions
         return suggestions.first
     }
 
-    internal func nextSuggestion(for suggestion: SMSuggestion<V>) -> SMSuggestion<V>? {
+    internal func nextSuggestion(for suggestion: Suggestion<V>) -> Suggestion<V>? {
         let suggestions = self.suggestions
         guard let index = suggestions.firstIndex(of: suggestion),
               index + 1 < suggestions.count else {
@@ -84,7 +84,7 @@ internal final class SuggestionsModel<V: Equatable>: ObservableObject {
         return suggestions[index + 1]
     }
 
-    internal func previousSuggestion(for suggestion: SMSuggestion<V>) -> SMSuggestion<V>? {
+    internal func previousSuggestion(for suggestion: Suggestion<V>) -> Suggestion<V>? {
         let suggestions = self.suggestions
         guard let index = suggestions.firstIndex(of: suggestion),
               index - 1 >= 0 else {
@@ -93,12 +93,12 @@ internal final class SuggestionsModel<V: Equatable>: ObservableObject {
         return suggestions[index - 1]
     }
     
-    internal func chooseSuggestion(_ suggestion: SMSuggestion<V>?) {
+    internal func chooseSuggestion(_ suggestion: Suggestion<V>?) {
         self.selectedSuggestion = suggestion
         self.suggestionConfirmed = false
     }
     
-    internal func confirmSuggestion(_ suggestion: SMSuggestion<V>) {
+    internal func confirmSuggestion(_ suggestion: Suggestion<V>) {
         
         self.selectedSuggestion = suggestion
         self.suggestionsVisible = false
