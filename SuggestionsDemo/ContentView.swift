@@ -20,11 +20,12 @@ struct ContentView: View {
                 }
             }
             .font(.title)
-            .frame(height: 300)
-
-            SuggestionInput(text: self.$model.currentText,
-                            suggestionGroups: self.model.suggestionGroups)
-                .frame(width: 300)
+            .frame(width: 600, height: 300)
+            .toolbar {
+                SuggestionInput(text: self.$model.currentText,
+                                suggestionGroups: self.model.suggestionGroups)
+                    .frame(width: 300)
+            }
         }
         .padding()
     }
